@@ -7,6 +7,7 @@ import {createEventsListTemplate} from './view/events-list.js';
 import {createEventAddTemplate} from './view/event-add.js';
 import {createEventEditTemplate} from './view/event-edit.js';
 import {createEventTemplate} from './view/event.js';
+import './mock/event-mock.js';
 
 const RENDER_COUNT = 3;
 

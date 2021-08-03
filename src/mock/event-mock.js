@@ -1,3 +1,9 @@
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration.js';
+import minMax from 'dayjs/plugin/minMax.js';
+dayjs.extend(minMax);
+dayjs.extend(duration);
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -14,6 +20,40 @@ const description = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 const pointType = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const towns = ['Tokyo', 'London', 'Taipei', 'Singapore', 'Barcelona', 'New York', 'Amsterdam', 'Sydney', 'Vienna', 'Salzburg'];
 const offersTitle = ['Upgrade to a business class', 'Choose the radio station', 'Choose meal', 'Upgrade to comfort class', 'Order Uber'];
+
+const generateDate = () => {
+  const maxMinuteGap = 30;
+  const maxHourGap = 3;
+  const maxDayGap = 3;
+  const minuteGap = getRandomInteger(-maxMinuteGap, maxMinuteGap);
+  const hourGap = getRandomInteger(-maxHourGap, maxHourGap);
+  const dayGap = getRandomInteger(-maxDayGap, maxDayGap);
+
+  return dayjs().add(minuteGap, 'minute').add(hourGap, 'hour').add(dayGap, 'day').toDate();
+};
+
+const date1 = dayjs(generateDate());
+const date2 = dayjs(generateDate());
+
+const getDateFrom = () => dayjs.min(date1, date2);
+const getDateTo = () => dayjs.max(date1, date2);
+
+const dateFrom = getDateFrom();
+const dateTo = getDateTo();
+
+const getDuration = () => {
+  const currentDuration = dateTo.diff(dateFrom);
+  console.log(currentDuration);
+  const millisecondsDuration = dayjs.duration(currentDuration, 'millisecond');
+  const minuteDuration = millisecondsDuration.format('mm');
+  const hourDuration = millisecondsDuration.format('HH');
+  const dayDuration = millisecondsDuration.format('DD');
+  const concatDuration = `${dayDuration} days ${hourDuration} hours ${minuteDuration} minute`;
+  console.log(concatDuration);
+  return currentDuration;
+};
+
+getDuration();
 
 const getDescription = () => {
   const descriptionCount = getRandomInteger(0, description.length - 1);
@@ -70,13 +110,16 @@ const offer = {
 
 const point = {
   'base_price': getRandomInteger(500, 2000),
-  'date_from': '2019-07-10T22:55:56.845Z',
-  'date_to': '2019-07-11T11:22:13.375Z',
+  'date_from': dateFrom.format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+  'date_to': dateTo.format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+  'duration': '',
   'destination': destination,
   'id': `${getRandomInteger(0, 100)}`,
   'is_favorite': Boolean(getRandomInteger(0, 1)),
   'offers': currentOffers,
   'type': currentType,
 };
+console.log(point.date_from);
+console.log(point.date_to);
 
 
