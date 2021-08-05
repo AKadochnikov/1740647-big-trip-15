@@ -1,11 +1,30 @@
-const createEventEditTemplate = () => (
-  `<li class="trip-events__item">
-              <form class="event event--edit" action="#" method="post">
-                <header class="event__header">
-                  <div class="event__type-wrapper">
+
+const eventTypeHandler = () => {
+  const eventTypeList = document.querySelector('.event__type-list');
+  const allEventTypes = eventTypeList.querySelectorAll('input');
+  const eventTypeWrapper = document.querySelector('.event__type-wrapper');
+  const labelType = eventTypeWrapper.querySelector('label');
+  const imageType = labelType.querySelector('.event__type-icon');
+  const eventFieldGroup = document.querySelector('.event__field-group');
+  const eventLabel = eventFieldGroup.querySelector('.event__label');
+
+  eventTypeList.addEventListener('change', (evt) => {
+    const typeValue = evt.target.value;
+    imageType.src = `img/icons/${typeValue}.png`;
+    eventLabel.textContent = typeValue;
+    allEventTypes.forEach((item) => {
+      item.removeAttribute('checked');
+      if(typeValue === item.value) {
+        item.setAttribute('checked', 'checked');
+      }
+    });
+  });
+};
+
+const createTypeTemplate = (item) => `<div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${item.type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -64,11 +83,17 @@ const createEventEditTemplate = () => (
                         </div>
                       </fieldset>
                     </div>
-                  </div>
+                  </div>`;
+
+const createEventEditTemplate = (item) => (
+  `<li class="trip-events__item">
+              <form class="event event--edit" action="#" method="post">
+                <header class="event__header">
+                  ${createTypeTemplate(item)}
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      Flight
+                      ${item.type}
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
                     <datalist id="destination-list-1">
@@ -161,5 +186,5 @@ const createEventEditTemplate = () => (
             </li>`
 );
 
-export {createEventEditTemplate};
+export {createEventEditTemplate, eventTypeHandler};
 

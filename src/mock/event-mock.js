@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration.js';
 import minMax from 'dayjs/plugin/minMax.js';
 dayjs.extend(minMax);
-dayjs.extend(duration);
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -32,28 +30,6 @@ const generateDate = () => {
   return dayjs().add(minuteGap, 'minute').add(hourGap, 'hour').add(dayGap, 'day').toDate();
 };
 
-const date1 = dayjs(generateDate());
-const date2 = dayjs(generateDate());
-
-const getDateFrom = () => dayjs.min(date1, date2);
-const getDateTo = () => dayjs.max(date1, date2);
-
-const dateFrom = getDateFrom();
-const dateTo = getDateTo();
-
-const getDuration = () => {
-  const currentDuration = dateTo.diff(dateFrom);
-  console.log(currentDuration);
-  const millisecondsDuration = dayjs.duration(currentDuration, 'millisecond');
-  const minuteDuration = millisecondsDuration.format('mm');
-  const hourDuration = millisecondsDuration.format('HH');
-  const dayDuration = millisecondsDuration.format('DD');
-  const concatDuration = `${dayDuration} days ${hourDuration} hours ${minuteDuration} minute`;
-  console.log(concatDuration);
-  return currentDuration;
-};
-
-getDuration();
 
 const getDescription = () => {
   const descriptionCount = getRandomInteger(0, description.length - 1);
@@ -77,49 +53,49 @@ const getOffers = () => {
   return newOffersArray;
 };
 
-const currentDescription = getDescription();
-const currentTown = towns[getRandomInteger(0, towns.length - 1)];
 const currentType = pointType[getRandomInteger(0, pointType.length - 1)];
 const currentOffers = getOffers();
 
-const getPictureArray = () => {
+const getPictures = () => {
+  const currentDescription = getDescription();
   const count = getRandomInteger(0, 5);
   const newPicturesArray = [];
   for (let i = 0; i <= count; i++) {
     const pictureItem = {
       'src': `http://picsum.photos/300/200?r=${getRandomInteger(1, 9999999)}`,
-      'description': `${currentTown} ${currentDescription.charAt(0).toLowerCase() + currentDescription.slice(1)}`,
+      'description': `${currentDescription.charAt(0).toLowerCase() + currentDescription.slice(1)}`,
     };
     newPicturesArray.push(pictureItem);
   }
   return newPicturesArray;
 };
 
-const currentPictures = getPictureArray();
-
-const destination = {
-  'description': currentDescription,
-  'name': currentTown,
-  'pictures': currentPictures,
-};
+const getDestination = () => ({
+  'description': getDescription(),
+  'name': towns[getRandomInteger(0, towns.length - 1)],
+  'pictures': getPictures(),
+});
 
 const offer = {
   'type': currentType,
   'offers': currentOffers,
 };
 
-const point = {
-  'base_price': getRandomInteger(500, 2000),
-  'date_from': dateFrom.format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
-  'date_to': dateTo.format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
-  'duration': '',
-  'destination': destination,
-  'id': `${getRandomInteger(0, 100)}`,
-  'is_favorite': Boolean(getRandomInteger(0, 1)),
-  'offers': currentOffers,
-  'type': currentType,
+const generatePoint = () => {
+  const date1 = dayjs(generateDate());
+  const date2 = dayjs(generateDate());
+  const getDateFrom = () => dayjs.min(date1, date2);
+  const getDateTo = () => dayjs.max(date1, date2);
+  return {
+    'base_price': getRandomInteger(500, 2000),
+    'date_from': getDateFrom().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+    'date_to': getDateTo().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+    'destination': getDestination(),
+    'id': `${getRandomInteger(0, 100)}`,
+    'is_favorite': Boolean(getRandomInteger(0, 1)),
+    'offers': getOffers(),
+    'type': pointType[getRandomInteger(0, pointType.length - 1)],
+  };
 };
-console.log(point.date_from);
-console.log(point.date_to);
 
-
+export {generatePoint, offer};
