@@ -15,6 +15,16 @@ const RENDER_COUNT = 20;
 
 const points = new Array(RENDER_COUNT).fill().map(generatePoint);
 
+const townsSet = new Set();
+
+const getTownsSet = (items) => {
+  items.forEach((item) => {
+    townsSet.add(item.destination.name);
+  });
+};
+
+getTownsSet(points);
+
 const tripMain = document.querySelector('.trip-main');
 const controlNavigation = document.querySelector('.trip-controls__navigation');
 const controlFilters = document.querySelector('.trip-controls__filters');
@@ -37,12 +47,12 @@ render(tripEvents, createEventsListTemplate(), 'beforeend');
 const eventList = document.querySelector('.trip-events__list');
 
 render(eventList,createEventEditTemplate(points[0]), 'beforeend');
-render(eventList, createEventAddTemplate(), 'beforeend');
+render(eventList,createEventAddTemplate(points[0]), 'beforeend');
 
 const getRenderEvents = (items) => {
   eventList.innerHTML = '';
   render(eventList,createEventEditTemplate(points[0]), 'beforeend');
-  render(eventList, createEventAddTemplate(points[0]), 'beforeend');
+  render(eventList,createEventAddTemplate(points[0]), 'beforeend');
   for (let i = 1; i < items.length; i++){
     render(eventList, createEventTemplate(items[i]), 'beforeend');
   }
@@ -52,4 +62,4 @@ getRenderEvents(points);
 filterStateHandler(points, getRenderEvents);
 eventTypeHandler();
 
-export {getRenderEvents};
+export {getRenderEvents, townsSet, points};
