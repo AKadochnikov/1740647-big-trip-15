@@ -1,11 +1,32 @@
-const createEventEditTemplate = () => (
-  `<li class="trip-events__item">
-              <form class="event event--edit" action="#" method="post">
-                <header class="event__header">
-                  <div class="event__type-wrapper">
+import {townsSet} from '../main.js';
+import dayjs from 'dayjs';
+
+const eventTypeHandler = () => {
+  const eventTypeList = document.querySelector('.event__type-list');
+  const allEventTypes = eventTypeList.querySelectorAll('input');
+  const eventTypeWrapper = document.querySelector('.event__type-wrapper');
+  const labelType = eventTypeWrapper.querySelector('label');
+  const imageType = labelType.querySelector('.event__type-icon');
+  const eventFieldGroup = document.querySelector('.event__field-group');
+  const eventLabel = eventFieldGroup.querySelector('.event__label');
+
+  eventTypeList.addEventListener('change', (evt) => {
+    const typeValue = evt.target.value;
+    imageType.src = `img/icons/${typeValue}.png`;
+    eventLabel.textContent = typeValue;
+    allEventTypes.forEach((item) => {
+      item.removeAttribute('checked');
+      if(typeValue === item.value) {
+        item.setAttribute('checked', 'checked');
+      }
+    });
+  });
+};
+
+const createTypeTemplate = (item) => `<div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${item.type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -64,26 +85,43 @@ const createEventEditTemplate = () => (
                         </div>
                       </fieldset>
                     </div>
-                  </div>
+                  </div>`;
 
+const createDataListOptionsTemplate = (townItems) => {
+  let optionTemplate = '';
+  townItems.forEach((item) => {
+    const currentOption = `<option value="${item}"></option>`;
+    optionTemplate += currentOption;
+  });
+  return optionTemplate;
+};
+
+const getFormatedDate = (date) => {
+  const dateObj = dayjs(date, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  return dateObj.format('DD/MM/YYYY HH:mm');
+};
+
+const createEventEditTemplate = (item) => (
+  `<li class="trip-events__item">
+              <form class="event event--edit" action="#" method="post">
+                <header class="event__header">
+                  ${createTypeTemplate(item)}
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      Flight
+                      ${item.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
+                      ${createDataListOptionsTemplate(townsSet)}
                     </datalist>
                   </div>
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatedDate(item.date_from)}" readonly>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatedDate(item.date_to)}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -91,7 +129,7 @@ const createEventEditTemplate = () => (
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${item.base_price}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -154,12 +192,13 @@ const createEventEditTemplate = () => (
 
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
+                    <p class="event__destination-description">${item.destination.description}</p>
                   </section>
                 </section>
               </form>
             </li>`
 );
 
-export {createEventEditTemplate};
+
+export {createEventEditTemplate, eventTypeHandler, createTypeTemplate, createDataListOptionsTemplate, getFormatedDate};
 
