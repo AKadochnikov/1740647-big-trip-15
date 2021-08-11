@@ -1,5 +1,5 @@
-import {createTypeTemplate, createDataListOptionsTemplate, getFormatedDate} from './event-edit.js';
 import {townsSet} from '../main.js';
+import {createDataListOptionsTemplate, createElement, createTypeTemplate, getFormatedDate} from '../utils';
 
 const getPhotoItems = (items) => {
   let photoTemplate = '';
@@ -111,4 +111,27 @@ const createEventAddTemplate = (item) => (
             </li>`
 );
 
-export {createEventAddTemplate};
+class EventAdd {
+  constructor(item) {
+    this._item = item;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventAddTemplate(this._item);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default EventAdd;

@@ -2,6 +2,10 @@ import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax.js';
 dayjs.extend(minMax);
 
+const MAX_MINUTE_GAP = 30;
+const MAX_HOUR_GAP = 3;
+const MAX_DAY_GAP = 3;
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -9,33 +13,30 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const description = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+const descriptions = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
   'Fusce tristique felis at fermentum pharetra.',
   'Aliquam id orci ut lectus varius viverra.',
   'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.'];
 
-const pointType = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const towns = ['Tokyo', 'London', 'Taipei', 'Singapore', 'Barcelona', 'New York', 'Amsterdam', 'Sydney', 'Vienna', 'Salzburg'];
 const offersTitle = ['Upgrade to a business class', 'Choose the radio station', 'Choose meal', 'Upgrade to comfort class', 'Order Uber'];
 
 const generateDate = () => {
-  const maxMinuteGap = 30;
-  const maxHourGap = 3;
-  const maxDayGap = 3;
-  const minuteGap = getRandomInteger(-maxMinuteGap, maxMinuteGap);
-  const hourGap = getRandomInteger(-maxHourGap, maxHourGap);
-  const dayGap = getRandomInteger(-maxDayGap, maxDayGap);
+  const minuteGap = getRandomInteger(-MAX_MINUTE_GAP, MAX_MINUTE_GAP);
+  const hourGap = getRandomInteger(-MAX_HOUR_GAP, MAX_HOUR_GAP);
+  const dayGap = getRandomInteger(-MAX_DAY_GAP, MAX_DAY_GAP);
 
   return dayjs().add(minuteGap, 'minute').add(hourGap, 'hour').add(dayGap, 'day').toDate();
 };
 
 
 const getDescription = () => {
-  const descriptionCount = getRandomInteger(0, description.length - 1);
+  const descriptionCount = getRandomInteger(0, descriptions.length - 1);
   const newDescription = [];
   for (let i = 0; i <= descriptionCount; i++) {
-    newDescription.push(description[i]);
+    newDescription.push(descriptions[i]);
   }
   return newDescription.join(' ');
 };
@@ -53,7 +54,7 @@ const getOffers = () => {
   return newOffersArray;
 };
 
-const currentType = pointType[getRandomInteger(0, pointType.length - 1)];
+const currentType = pointTypes[getRandomInteger(0, pointTypes.length - 1)];
 const currentOffers = getOffers();
 
 const getPictures = () => {
@@ -94,7 +95,7 @@ const generatePoint = () => {
     'id': `${getRandomInteger(0, 100)}`,
     'is_favorite': Boolean(getRandomInteger(0, 1)),
     'offers': getOffers(),
-    'type': pointType[getRandomInteger(0, pointType.length - 1)],
+    'type': pointTypes[getRandomInteger(0, pointTypes.length - 1)],
   };
 };
 
