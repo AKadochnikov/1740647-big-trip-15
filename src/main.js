@@ -4,7 +4,7 @@ import ControlFiltersView from './view/control-filters';
 import SortControlsView from './view/sort-controls';
 import CostView from './view/cost';
 import EventsListView from './view/events-list';
-import EventAddView from './view/event-add';
+//import EventAddView from './view/event-add';
 import EventEditView from './view/event-edit';
 import EventView from './view/event';
 import NoEvent from './view/no-events';
@@ -89,7 +89,6 @@ const tripInfo = document.querySelector('.trip-main__trip-info');
 render(tripInfo, new CostView().getElement(), RenderPosition.BEFOREEND);
 render(controlNavigation, new NavigationView().getElement(), RenderPosition.BEFOREEND);
 render(controlFilters, new ControlFiltersView().getElement(), RenderPosition.BEFOREEND);
-//render(tripEvents, new SortControlsView().getElement(), RenderPosition.BEFOREEND);
 
 renderEventList(tripEvents, points);
 
