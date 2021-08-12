@@ -1,4 +1,4 @@
-import {getDuration} from '../utils.js';
+import {createElement, getDuration} from '../utils.js';
 import dayjs from 'dayjs';
 
 const createOffersCollection = (offers) => {
@@ -58,4 +58,27 @@ const createEventTemplate = (item) => {
             </li>`;
 };
 
-export {createEventTemplate, createOffersCollection};
+class Event {
+  constructor(item) {
+    this._item = item;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._item);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default Event;

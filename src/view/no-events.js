@@ -1,18 +1,18 @@
 import {createElement} from '../utils';
 
-const createCostTemplate = () => (
-  `<p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-    </p>`
+const createNoEventsTemplate = () => (
+  `<p class="trip-events__msg">
+    Click New Event to create your first point
+  </p>`
 );
 
-class Cost {
+class NoEvent {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createCostTemplate();
+    return createNoEventsTemplate();
   }
 
   getElement() {
@@ -28,4 +28,4 @@ class Cost {
   }
 }
 
-export default Cost;
+export default NoEvent;
