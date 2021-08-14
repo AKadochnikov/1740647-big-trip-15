@@ -1,5 +1,7 @@
 import {townsSet} from '../main.js';
-import {createTypeTemplate, createDataListOptionsTemplate, getFormatedDate, createElement} from '../utils';
+import AbstractView from './abstract';
+import {createDataListOptionsTemplate, createTypeTemplate} from '../utils/event-edit-add';
+import {getFormatedDate} from '../utils/event';
 
 const createEventEditTemplate = (item) => (
   `<li class="trip-events__item">
@@ -99,26 +101,36 @@ const createEventEditTemplate = (item) => (
             </li>`
 );
 
-class EventEdit {
+class EventEdit extends AbstractView {
   constructor(item) {
+    super();
     this._item = item;
-    this._element = null;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventEditTemplate(this._item);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }
 

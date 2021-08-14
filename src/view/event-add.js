@@ -1,5 +1,7 @@
 import {townsSet} from '../main.js';
-import {createDataListOptionsTemplate, createElement, createTypeTemplate, getFormatedDate} from '../utils';
+import AbstractView from './abstract';
+import {createDataListOptionsTemplate, createTypeTemplate} from '../utils/event-edit-add';
+import {getFormatedDate} from '../utils/event';
 
 const getPhotoItems = (items) => {
   let photoTemplate = '';
@@ -111,26 +113,25 @@ const createEventAddTemplate = (item) => (
             </li>`
 );
 
-class EventAdd {
+class EventAdd extends AbstractView {
   constructor(item) {
+    super();
     this._item = item;
-    this._element = null;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createEventAddTemplate(this._item);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 }
 
