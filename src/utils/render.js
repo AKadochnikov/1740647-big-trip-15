@@ -49,7 +49,7 @@ const replace = (newChild, oldChild) => {
   parent.replaceChild(newChild, oldChild);
 };
 
-/* Пока не понадобилась
+
 const remove = (component) => {
   if (!(component instanceof Abstract)) {
     throw new Error('Can remove only components');
@@ -57,6 +57,6 @@ const remove = (component) => {
 
   component.getElement().remove();
   component.removeElement();
-};*/
+};
 
-export {RenderPosition, createElement, render, replace};
+export {RenderPosition, createElement, render, replace, remove};
