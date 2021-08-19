@@ -5,10 +5,11 @@ import CostView from './view/cost';
 import {generatePoint} from './mock/event-mock';
 import {render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
+import {sortDay} from './utils/event';
 
 const RENDER_COUNT = 20;
 
-const points = new Array(RENDER_COUNT).fill().map(generatePoint);
+const points = new Array(RENDER_COUNT).fill().map(generatePoint).sort(sortDay);
 
 const townsSet = new Set();
 

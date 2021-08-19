@@ -26,4 +26,33 @@ const getFormatedDate = (date) => {
   return dayjsDate.format('DD/MM/YYYY HH:mm');
 };
 
-export {getFormatedDate, getDuration};
+const sortDay = (eventA, eventB) => {
+  const dayjsDateA = dayjs(eventA.date_from, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const dayjsDateB = dayjs(eventB.date_from, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  return dayjs(dayjsDateA).diff(dayjs(dayjsDateB));
+};
+
+const getDateMilliseconds = (event) => {
+  const dateStartObj = dayjs(event.date_from, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const dateEndObj = dayjs(event.date_to, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const currentDuration = dateEndObj.diff(dateStartObj);
+  return dayjs(currentDuration);
+};
+
+const sortTime = (eventA, eventB) => {
+  const rankA = getDateMilliseconds(eventA);
+  const rankB = getDateMilliseconds(eventB);
+
+  return rankB - rankA;
+};
+
+const getPrice = (event) => event.base_price;
+
+const sortPrice = (eventA, eventB) => {
+  const rankA = getPrice(eventA);
+  const rankB = getPrice(eventB);
+
+  return rankB - rankA;
+};
+
+export {getFormatedDate, getDuration, sortDay, sortTime, sortPrice};

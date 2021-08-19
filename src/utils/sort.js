@@ -1,6 +1,6 @@
 //Сортировка находится в разработке.
 /*const getDateMilliseconds = (dateStart, dateEnd) => {
-  const dateStartObj = dayjs(dateStart, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const dateStartObj = dayjs(date., 'YYYY-MM-DDTHH:mm:ssZ[Z]');
   const dateEndObj = dayjs(dateEnd, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
   const currentDuration = dateEndObj.diff(dateStartObj);
   return dayjs(currentDuration);
@@ -17,7 +17,7 @@ const getPrice = (item) => item.price;
 
 const compareSortPrice = (priceA, priceB) => {
   const rankA = getPrice(priceA);
-  const rankB = getDateMilliseconds(priceB);
+  const rankB = getPrice(priceB);
 
   return rankB - rankA;
 };
