@@ -22,7 +22,7 @@ const filterStateHandler = (items, cb) => {
   filter.addEventListener('change', (evt) => {
     const target = evt.target.id;
     const copiedItems = items.slice();
-    let filteredArray = '';
+    let filteredItems = '';
 
     allFilterInputs.forEach((filterItem) => {
       filterItem.removeAttribute('checked');
@@ -31,22 +31,22 @@ const filterStateHandler = (items, cb) => {
     switch (target) {
       case 'filter-everything':
         everythingFilter.setAttribute('checked', 'checked');
-        filteredArray = copiedItems;
+        filteredItems = copiedItems;
         break;
       case 'filter-future':
         futureFilter.setAttribute('checked', 'checked');
-        filteredArray = copiedItems.filter((item) => getFilterFuture(item));
+        filteredItems = copiedItems.filter((item) => getFilterFuture(item));
         break;
       case 'filter-past':
         pastFilter.setAttribute('checked', 'checked');
-        filteredArray = copiedItems.filter((item) => getFilterPast(item));
+        filteredItems = copiedItems.filter((item) => getFilterPast(item));
         break;
       default:
         everythingFilter.setAttribute('checked', 'checked');
-        filteredArray = copiedItems;
+        filteredItems = copiedItems;
         break;
     }
-    cb(filteredArray);
+    cb(filteredItems);
   });
 };
 

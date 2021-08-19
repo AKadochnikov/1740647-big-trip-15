@@ -86,7 +86,7 @@ const generatePoint = () => {
     'date_from': getDateFrom().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
     'date_to': getDateTo().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
     'destination': getDestination(),
-    'id': `${getRandomInteger(0, 100)}`,
+    'id': `${getRandomInteger(0, 100000)}`,
     'is_favorite': Boolean(getRandomInteger(0, 1)),
     'offers': getOffers(),
     'type': pointTypes[getRandomInteger(0, pointTypes.length - 1)],

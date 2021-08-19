@@ -3,9 +3,9 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
 const getDuration = (dateStart, dateEnd) => {
-  const dateStartObj = dayjs(dateStart, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  const dateEndObj = dayjs(dateEnd, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  const currentDuration = dateEndObj.diff(dateStartObj);
+  const dayjsDateStart = dayjs(dateStart, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const dayjsDateEnd = dayjs(dateEnd, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const currentDuration = dayjsDateEnd.diff(dayjsDateStart);
   const millisecondsDuration = dayjs.duration(currentDuration, 'millisecond');
   const minuteDuration = millisecondsDuration.format('mm');
   const hourDuration = millisecondsDuration.format('HH');
@@ -22,8 +22,8 @@ const getDuration = (dateStart, dateEnd) => {
 };
 
 const getFormatedDate = (date) => {
-  const dateObj = dayjs(date, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  return dateObj.format('DD/MM/YYYY HH:mm');
+  const dayjsDate = dayjs(date, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  return dayjsDate.format('DD/MM/YYYY HH:mm');
 };
 
 export {getFormatedDate, getDuration};

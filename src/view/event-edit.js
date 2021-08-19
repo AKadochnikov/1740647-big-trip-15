@@ -115,7 +115,7 @@ class EventEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._event);
   }
 
   setFormSubmitHandler(callback) {
@@ -125,7 +125,7 @@ class EventEdit extends AbstractView {
 
   _editClickHandler(evt) {
     evt.preventDefault();
-    this._callback.editClick();
+    this._callback.editClick(this._event);
   }
 
   setEditClickHandler(callback) {
