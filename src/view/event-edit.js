@@ -1,7 +1,7 @@
 import {townsSet} from '../main.js';
 import SmartView from './smart';
 import {createDataListOptionsTemplate, createTypeTemplate} from '../utils/event-edit-add';
-import {getDuration, getFormatedDate} from '../utils/event';
+import {getFormatedDate} from '../utils/event';
 import {destionations, availableOffers} from '../mock/event-mock';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
