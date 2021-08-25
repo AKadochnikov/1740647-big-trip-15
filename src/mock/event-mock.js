@@ -165,8 +165,8 @@ const generatePoint = () => {
   const getDateTo = () => dayjs.max(date1, date2);
   return {
     'base_price': getRandomInteger(500, 2000),
-    'date_from': getDateFrom().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
-    'date_to': getDateTo().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+    'date_from': getDateFrom(),
+    'date_to': getDateTo(),
     'destination': destionations[getRandomInteger(0, destionations.length - 1)],
     'id': `${getRandomInteger(0, 100000)}`,
     'is_favorite': Boolean(getRandomInteger(0, 1)),
