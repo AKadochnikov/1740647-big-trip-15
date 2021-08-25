@@ -146,7 +146,7 @@ class EventEdit extends SmartView {
           ['time_24hr']: true,
           enableTime: true,
           defaultDate: getFormatedDate(this._data.date_from),
-          onChange: this._startDateChangeHandler,
+          onClose: this._startDateChangeHandler,
         },
       );
     }
@@ -167,7 +167,7 @@ class EventEdit extends SmartView {
           enableTime: true,
           defaultDate: getFormatedDate(this._data.date_to),
           minDate: getFormatedDate(this._data.date_from),
-          onChange: this._endDateChangeHandler,
+          onClose: this._endDateChangeHandler,
         },
       );
     }
@@ -195,7 +195,7 @@ class EventEdit extends SmartView {
     }
     this.updateData({
       'date_from': dayjs(userDate),
-    }, true);
+    });
   }
 
   _endDateChangeHandler([userDate]) {
