@@ -42,10 +42,10 @@ const createEventTemplate = (item) => {
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${item.base_price}</span>
                 </p>
-                <h4 class="visually-hidden">Offers:</h4>
+                ${item.offers ? `<h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
                     ${createOffersCollection(item.offers)}
-                </ul>
+                </ul>` : ''}
                 <button class="event__favorite-btn ${getFavoriteButton(item.is_favorite)}" type="button">
                   <span class="visually-hidden">Add to favorite</span>
                   <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

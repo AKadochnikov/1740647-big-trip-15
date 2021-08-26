@@ -1,7 +1,35 @@
 import {townsSet} from '../main.js';
-import AbstractView from './abstract';
+import SmartView from './smart';
 import {createDataListOptionsTemplate, createTypeTemplate} from '../utils/event-edit-add';
 import {getFormatedDate} from '../utils/event';
+import {destionations, availableOffers} from '../mock/event-mock';
+
+
+const getPhotoItems = (items) => {
+  let photoTemplate = '';
+  items.forEach((item) => {
+    const currentPhoto = `<img class="event__photo" src="${item.src}" alt="Event photo">`;
+    photoTemplate += currentPhoto;
+  });
+  return photoTemplate;
+};
+
+const createAvailableOffer = (offers) => {
+  let offersTemplate = '';
+  offers.forEach((currentOffer) => {
+    const currentOffersTemplate = `<div class="event__offer-selector">
+                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${currentOffer.offer_id}-1" type="checkbox" name="event-offer-${currentOffer.offer_id}">
+                        <label class="event__offer-label" for="event-offer-${currentOffer.offer_id}-1">
+                          <span class="event__offer-title">${currentOffer.title}</span>
+                          &plus;&euro;&nbsp;
+                          <span class="event__offer-price">${currentOffer.price}</span>
+                        </label>
+                      </div>`;
+    offersTemplate += currentOffersTemplate;
+  });
+  return offersTemplate;
+};
+
 
 const createEventEditTemplate = (item) => (
   `<li class="trip-events__item">
@@ -41,81 +69,103 @@ const createEventEditTemplate = (item) => (
                   </button>
                 </header>
                 <section class="event__details">
-                  <section class="event__section  event__section--offers">
+                  ${item.offers ? `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
-                      <div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                        <label class="event__offer-label" for="event-offer-luggage-1">
-                          <span class="event__offer-title">Add luggage</span>
-                          &plus;&euro;&nbsp;
-                          <span class="event__offer-price">50</span>
-                        </label>
-                      </div>
-
-                      <div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-                        <label class="event__offer-label" for="event-offer-comfort-1">
-                          <span class="event__offer-title">Switch to comfort</span>
-                          &plus;&euro;&nbsp;
-                          <span class="event__offer-price">80</span>
-                        </label>
-                      </div>
-
-                      <div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-                        <label class="event__offer-label" for="event-offer-meal-1">
-                          <span class="event__offer-title">Add meal</span>
-                          &plus;&euro;&nbsp;
-                          <span class="event__offer-price">15</span>
-                        </label>
-                      </div>
-
-                      <div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-                        <label class="event__offer-label" for="event-offer-seats-1">
-                          <span class="event__offer-title">Choose seats</span>
-                          &plus;&euro;&nbsp;
-                          <span class="event__offer-price">5</span>
-                        </label>
-                      </div>
-
-                      <div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-                        <label class="event__offer-label" for="event-offer-train-1">
-                          <span class="event__offer-title">Travel by train</span>
-                          &plus;&euro;&nbsp;
-                          <span class="event__offer-price">40</span>
-                        </label>
-                      </div>
+                    ${createAvailableOffer(item.offers)}
                     </div>
-                  </section>
+                  </section>`: ''}
 
-                  <section class="event__section  event__section--destination">
+                 ${item.destination.description ? `<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${item.destination.description}</p>
-                  </section>
+                  </section>`: ''}
+                                 ${item.destination.pictures ? `<div class="event__photos-container">
+                      <div class="event__photos-tape">
+                      ${getPhotoItems(item.destination.pictures)}
+                      </div>
+                    </div>` : ''}
                 </section>
               </form>
             </li>`
 );
 
-class EventEdit extends AbstractView {
-  constructor(item) {
+class EventEdit extends SmartView {
+  constructor(event) {
     super();
-    this._item = item;
+    this._data = EventEdit.parseEventToData(event);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
+
+    this._typesSelectHandler = this._typesSelectHandler.bind(this);
+    this._townsSelectHandler = this._townsSelectHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  reset(event) {
+    this.updateData(
+      EventEdit.parseEventToData(event),
+    );
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._item);
+    return createEventEditTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.editClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.event__type-list')
+      .addEventListener('change', this._typesSelectHandler);
+    this.getElement()
+      .querySelector('#event-destination-1')
+      .addEventListener('change', this._townsSelectHandler);
+    this.getElement()
+      .querySelector('#event-price-1')
+      .addEventListener('input', this._priceInputHandler);
+  }
+
+  _typesSelectHandler(evt) {
+    evt.preventDefault();
+    availableOffers.forEach((item) => {
+      if(item.type === evt.target.value) {
+        this.updateData({
+          type: item.type,
+          offers: item.offers,
+        });
+      }
+    });
+  }
+
+  _townsSelectHandler(evt) {
+    evt.preventDefault();
+    destionations.forEach((item) => {
+      if(item.name === evt.target.value){
+        this.updateData({
+          destination: item,
+        });
+      }
+    });
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      'base_price': evt.target.value,
+    }, true);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._event);
+    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
   }
 
   setFormSubmitHandler(callback) {
@@ -125,12 +175,21 @@ class EventEdit extends AbstractView {
 
   _editClickHandler(evt) {
     evt.preventDefault();
-    this._callback.editClick(this._event);
+    this._callback.editClick(EventEdit.parseEventToData(this._data));
   }
 
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  }
+
+  static parseEventToData(event) {
+    return Object.assign({}, event);
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+    return data;
   }
 }
 
