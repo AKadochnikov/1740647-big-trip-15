@@ -17,7 +17,7 @@ const getPhotoItems = (items) => {
   return photoTemplate;
 };
 
-const createAvailableOffer = (offers) => {
+const createAvailableOffers = (offers) => {
   let offersTemplate = '';
   offers.forEach((currentOffer) => {
     const currentOffersTemplate = `<div class="event__offer-selector">
@@ -76,7 +76,7 @@ const createEventEditTemplate = (item) => (
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
-                    ${createAvailableOffer(item.offers)}
+                    ${createAvailableOffers(item.offers)}
                     </div>
                   </section>`: ''}
 
