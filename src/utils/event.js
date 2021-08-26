@@ -23,7 +23,7 @@ const getDuration = (dateStart, dateEnd) => {
 
 const getFormatedDate = (date) => {
   const dayjsDate = dayjs(date, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  return dayjsDate.format('DD/MM/YYYY HH:mm');
+  return dayjsDate.format('DD/MM/YY HH:mm');
 };
 
 const sortDay = (eventA, eventB) => {
