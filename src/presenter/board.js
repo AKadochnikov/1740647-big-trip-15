@@ -1,24 +1,24 @@
 import SortControlsView from '../view/sort-controls';
 import EventsListView from '../view/events-list';
 import NoEventView from '../view/no-events';
-import {render, RenderPosition} from '../utils/render';
+import {render, RenderPosition, remove} from '../utils/render';
 import EventPresenter from './event';
 import {sortPrice, sortTime} from '../utils/event';
-import {SortType} from '../const';
+import {SortType, UpdateType, UserAction} from '../const';
 
 class Board {
   constructor(boardContainer, eventsModel) {
     this._eventsModel = eventsModel;
     this._boardContainer = boardContainer;
-    this._sortComponent = new SortControlsView();
     this._eventListComponent = new EventsListView();
     this._noEventComponent = new NoEventView();
     this._eventPresenter = new Map();
     this._currentSortType = SortType.SORT_DAY;
 
+    this._sortComponent = null;
+
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelUpdateType = this._handleModelUpdateType.bind(this);
-    this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
@@ -43,24 +43,34 @@ class Board {
     this._eventPresenter.forEach((presenter) => presenter.resetView());
   }
 
-  /*_handleEventChange(updatedEvent) {
-    this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
-  }*/
-
   _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_EVENT:
+        this._eventsModel.updateEvents(updateType, update);
+        break;
+      case UserAction.ADD_EVENT:
+        this._eventsModel.addEvent(updateType, update);
+        break;
+      case UserAction.DELETE_EVENT:
+        this._eventsModel.deleteEvent(updateType, update);
+        break;
+    }
   }
 
   _handleModelUpdateType(updateType, data) {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._eventPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this._clearBoard();
+        this._renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this._clearBoard({resetSortType: true});
+        this._renderBoard();
+        break;
+    }
   }
 
   _handleSortTypeChange(sortType) {
@@ -69,13 +79,19 @@ class Board {
     }
 
     this._currentSortType = sortType;
-    this._clearEventList();
-    this._renderEventsList();
+    this._clearBoard();
+    this._renderBoard();
   }
 
   _renderSort() {
-    render(this._boardContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortControlsView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    render(this._boardContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(event) {
@@ -103,8 +119,20 @@ class Board {
     this._renderEvents(events);
   }
 
+  _clearBoard({resetSortType = false} = {}) {
+    this._clearEventList();
+
+    remove(this._sortComponent);
+    remove(this._noEventComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.SORT_DAY;
+    }
+  }
+
   _renderBoard() {
-    if (this._getEvents().length === 0) {
+    const events = this._getEvents();
+    if (events.length === 0) {
       this._renderNoEvents();
       return;
     }

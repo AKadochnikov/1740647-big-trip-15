@@ -78,4 +78,4 @@ const createTypeTemplate = (item) => `<div class="event__type-wrapper">
                   </div>`;
 
 
-export {createDataListOptionsTemplate, createTypeTemplate};
+export {createDataListOptionsTemplate, createTypeTemplate, isChecked};
