@@ -8,7 +8,8 @@ import {sortPrice, sortTime} from '../utils/event';
 import {SortType} from '../const';
 
 class Board {
-  constructor(boardContainer) {
+  constructor(boardContainer, eventsModel) {
+    this._eventsModel = eventsModel;
     this._boardContainer = boardContainer;
     this._sortComponent = new SortControlsView();
     this._eventListComponent = new EventsListView();
@@ -25,6 +26,10 @@ class Board {
     this._boardEvents = boardEvents.slice();
     this._sourcedBoardEvents = boardEvents.slice();
     this._renderBoard();
+  }
+
+  _getTasks() {
+    return this._eventsModel.getEvents();
   }
 
   _handleModeChange() {

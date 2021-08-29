@@ -6,6 +6,7 @@ import {generatePoint} from './mock/event-mock';
 import {render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
 import {sortDay} from './utils/event';
+import EventsModel from './model/events';
 
 const RENDER_COUNT = 20;
 
@@ -21,12 +22,15 @@ const getTownsSet = (items) => {
 
 getTownsSet(points);
 
+const eventsModel = new EventsModel();
+eventsModel.setEvents(points);
+
 const tripMain = document.querySelector('.trip-main');
 const controlNavigation = document.querySelector('.trip-controls__navigation');
 const controlFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
 
-const boardPresenter = new BoardPresenter(tripEvents);
+const boardPresenter = new BoardPresenter(tripEvents, eventsModel);
 
 render(tripMain, new TripInfoView, RenderPosition.AFTERBEGIN);
 
