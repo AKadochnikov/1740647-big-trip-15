@@ -40,6 +40,6 @@ render(tripInfo, new CostView, RenderPosition.BEFOREEND);
 render(controlNavigation, new NavigationView, RenderPosition.BEFOREEND);
 render(controlFilters, new ControlFiltersView, RenderPosition.BEFOREEND);
 
-boardPresenter.init(points);
+boardPresenter.init();
 
 export {townsSet, points};
