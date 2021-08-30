@@ -7,10 +7,18 @@ import {render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
 import {sortDay} from './utils/event';
 import EventsModel from './model/events';
+import FilterModel from './model/filter';
 
 const RENDER_COUNT = 20;
 
 const points = new Array(RENDER_COUNT).fill().map(generatePoint).sort(sortDay);
+
+const filters = [
+  {
+    type: 'everything',
+    name: 'Everything',
+  },
+];
 
 const townsSet = new Set();
 
@@ -25,6 +33,8 @@ getTownsSet(points);
 const eventsModel = new EventsModel();
 eventsModel.setEvents(points);
 
+const filterModel = new FilterModel();
+
 const tripMain = document.querySelector('.trip-main');
 const controlNavigation = document.querySelector('.trip-controls__navigation');
 const controlFilters = document.querySelector('.trip-controls__filters');
@@ -38,7 +48,7 @@ const tripInfo = document.querySelector('.trip-main__trip-info');
 
 render(tripInfo, new CostView, RenderPosition.BEFOREEND);
 render(controlNavigation, new NavigationView, RenderPosition.BEFOREEND);
-render(controlFilters, new ControlFiltersView, RenderPosition.BEFOREEND);
+render(controlFilters, new ControlFiltersView(filters, 'everything'), RenderPosition.BEFOREEND);
 
 boardPresenter.init();
 

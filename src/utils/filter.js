@@ -1,8 +1,12 @@
+import {FilterType} from '../const';
 import dayjs from 'dayjs';
 import IsSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import IsSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import IsBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(IsBetween);
 dayjs.extend(IsSameOrBefore);
 dayjs.extend(IsSameOrAfter);
+
 
 const getFilterFuture = (item) => {
   const dateFrom = dayjs(item.date_from, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
@@ -29,15 +33,15 @@ const filterStateHandler = (items, cb) => {
     });
 
     switch (target) {
-      case 'filter-everything':
+      case 'everything':
         everythingFilter.setAttribute('checked', 'checked');
         filteredItems = copiedItems;
         break;
-      case 'filter-future':
+      case 'future':
         futureFilter.setAttribute('checked', 'checked');
         filteredItems = copiedItems.filter((item) => getFilterFuture(item));
         break;
-      case 'filter-past':
+      case 'past':
         pastFilter.setAttribute('checked', 'checked');
         filteredItems = copiedItems.filter((item) => getFilterPast(item));
         break;
@@ -50,4 +54,10 @@ const filterStateHandler = (items, cb) => {
   });
 };
 
-export {getFilterFuture, filterStateHandler};
+const filter = {
+  [FilterType.EVERYTHING] : (events) => events,
+  [FilterType.FUTURE] : (events) => events.filter((event) => getFilterFuture(event)),
+  [FilterType.PAST] : (events) => events.filter((event) => getFilterPast(event)),
+};
+
+export {getFilterFuture, filterStateHandler, filter};

@@ -1,4 +1,4 @@
-import AbstractObserver from '../utils/abctract-observer';
+import AbstractObserver from '../utils/abstract-observer';
 
 class Events extends AbstractObserver {
   constructor() {
