@@ -41,7 +41,7 @@ const tripInfo = document.querySelector('.trip-main__trip-info');
 render(tripInfo, new CostView, RenderPosition.BEFOREEND);
 render(controlNavigation, new NavigationView, RenderPosition.BEFOREEND);
 
-const boardPresenter = new BoardPresenter(tripEvents, eventsModel);
+const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel);
 const filterPresenter = new FilterPresenter(controlFilters, filterModel, eventsModel);
 
 filterPresenter.init();

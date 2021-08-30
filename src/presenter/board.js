@@ -3,12 +3,14 @@ import EventsListView from '../view/events-list';
 import NoEventView from '../view/no-events';
 import {render, RenderPosition, remove} from '../utils/render';
 import EventPresenter from './event';
+import {filter} from '../utils/filter';
 import {sortPrice, sortTime} from '../utils/event';
 import {SortType, UpdateType, UserAction} from '../const';
 
 class Board {
-  constructor(boardContainer, eventsModel) {
+  constructor(boardContainer, eventsModel, filterModel) {
     this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
     this._boardContainer = boardContainer;
     this._eventListComponent = new EventsListView();
     this._noEventComponent = new NoEventView();
@@ -23,6 +25,7 @@ class Board {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._eventsModel.addObserver(this._handleModelUpdateType);
+    this._filterModel.addObserver(this._handleModelUpdateType);
   }
 
   init(){
@@ -30,13 +33,17 @@ class Board {
   }
 
   _getEvents() {
+    const filterType = this._filterModel.getFilter();
+    const events = this._eventsModel.getEvents();
+    const filteredEvents = filter[filterType](events);
+
     switch (this._currentSortType) {
       case SortType.SORT_TIME:
-        return this._eventsModel.getEvents().slice().sort(sortTime);
+        return filteredEvents.sort(sortTime);
       case SortType.SORT_PRICE:
-        return this._eventsModel.getEvents().slice().sort(sortPrice);
+        return filteredEvents.sort(sortPrice);
     }
-    return this._eventsModel.getEvents();
+    return filteredEvents;
   }
 
   _handleModeChange() {
