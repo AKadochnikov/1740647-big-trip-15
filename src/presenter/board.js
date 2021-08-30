@@ -108,19 +108,9 @@ class Board {
     render(this._boardContainer, this._noEventComponent, RenderPosition.BEFOREEND);
   }
 
-  _clearEventList () {
+  _clearBoard({resetSortType = false} = {}) {
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
-  }
-
-  _renderEventsList(){
-    render(this._boardContainer, this._eventListComponent, RenderPosition.BEFOREEND);
-    const events = this._getEvents().slice();
-    this._renderEvents(events);
-  }
-
-  _clearBoard({resetSortType = false} = {}) {
-    this._clearEventList();
 
     remove(this._sortComponent);
     remove(this._noEventComponent);
@@ -138,7 +128,8 @@ class Board {
     }
 
     this._renderSort();
-    this._renderEventsList();
+    render(this._boardContainer, this._eventListComponent, RenderPosition.BEFOREEND);
+    this._renderEvents(events);
   }
 }
 

@@ -102,6 +102,7 @@ class EventEdit extends SmartView {
     this._endDatepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
     this._typesSelectHandler = this._typesSelectHandler.bind(this);
     this._townsSelectHandler = this._townsSelectHandler.bind(this);
@@ -130,6 +131,19 @@ class EventEdit extends SmartView {
     this.setEditClickHandler(this._callback.editClick);
     this._setStartDatepicker();
     this._setEndDatePicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    } else if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
   }
 
   _setStartDatepicker() {
@@ -241,7 +255,18 @@ class EventEdit extends SmartView {
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
+    //TODO: в дальнейшем надо click переделать на submit
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._formSubmitHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   _editClickHandler(evt) {
