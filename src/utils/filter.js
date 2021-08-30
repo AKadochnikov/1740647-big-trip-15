@@ -7,51 +7,18 @@ dayjs.extend(IsBetween);
 dayjs.extend(IsSameOrBefore);
 dayjs.extend(IsSameOrAfter);
 
+const dateIsBetween = (dateFrom, dateTo) => dayjs().isBetween(dateFrom, dateTo);
 
 const getFilterFuture = (item) => {
   const dateFrom = dayjs(item.date_from, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  return dateFrom.isSameOrAfter(dayjs());
+  const dateTo = dayjs(item.date_to, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  return dateFrom.isSameOrAfter(dayjs()) || dateIsBetween(dateFrom, dateTo);
 };
+
 const getFilterPast = (item) => {
   const dateFrom = dayjs(item.date_from, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  return dateFrom.isSameOrBefore(dayjs());
-};
-const filterStateHandler = (items, cb) => {
-  const filter = document.querySelector('.trip-filters');
-  const allFilterInputs = filter.querySelectorAll('input');
-  const everythingFilter = filter.querySelector('#filter-everything');
-  const futureFilter = filter.querySelector('#filter-future');
-  const pastFilter = filter.querySelector('#filter-past');
-
-  filter.addEventListener('change', (evt) => {
-    const target = evt.target.id;
-    const copiedItems = items.slice();
-    let filteredItems = '';
-
-    allFilterInputs.forEach((filterItem) => {
-      filterItem.removeAttribute('checked');
-    });
-
-    switch (target) {
-      case 'everything':
-        everythingFilter.setAttribute('checked', 'checked');
-        filteredItems = copiedItems;
-        break;
-      case 'future':
-        futureFilter.setAttribute('checked', 'checked');
-        filteredItems = copiedItems.filter((item) => getFilterFuture(item));
-        break;
-      case 'past':
-        pastFilter.setAttribute('checked', 'checked');
-        filteredItems = copiedItems.filter((item) => getFilterPast(item));
-        break;
-      default:
-        everythingFilter.setAttribute('checked', 'checked');
-        filteredItems = copiedItems;
-        break;
-    }
-    cb(filteredItems);
-  });
+  const dateTo = dayjs(item.date_to, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  return dateFrom.isSameOrBefore(dayjs()) || dateIsBetween(dateFrom, dateTo);
 };
 
 const filter = {
@@ -60,4 +27,4 @@ const filter = {
   [FilterType.PAST] : (events) => events.filter((event) => getFilterPast(event)),
 };
 
-export {getFilterFuture, filterStateHandler, filter};
+export {getFilterFuture, filter};
