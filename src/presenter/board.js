@@ -5,7 +5,7 @@ import {render, RenderPosition, remove} from '../utils/render';
 import EventPresenter from './event';
 import {filter} from '../utils/filter';
 import {sortPrice, sortTime} from '../utils/event';
-import {SortType, UpdateType, UserAction} from '../const';
+import {SortType, UpdateType, UserAction, FilterType} from '../const';
 
 class Board {
   constructor(boardContainer, eventsModel, filterModel) {
@@ -13,11 +13,12 @@ class Board {
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
     this._eventListComponent = new EventsListView();
-    this._noEventComponent = new NoEventView();
     this._eventPresenter = new Map();
+    this._filterType = FilterType.EVERYTHING;
     this._currentSortType = SortType.SORT_DAY;
 
     this._sortComponent = null;
+    this._noEventComponent = null;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelUpdateType = this._handleModelUpdateType.bind(this);
@@ -33,9 +34,9 @@ class Board {
   }
 
   _getEvents() {
-    const filterType = this._filterModel.getFilter();
+    this._filterType = this._filterModel.getFilter();
     const events = this._eventsModel.getEvents();
-    const filteredEvents = filter[filterType](events);
+    const filteredEvents = filter[this._filterType](events);
 
     switch (this._currentSortType) {
       case SortType.SORT_TIME:
@@ -112,6 +113,7 @@ class Board {
   }
 
   _renderNoEvents() {
+    this._noEventComponent = new NoEventView(this._filterType);
     render(this._boardContainer, this._noEventComponent, RenderPosition.BEFOREEND);
   }
 
@@ -120,7 +122,10 @@ class Board {
     this._eventPresenter.clear();
 
     remove(this._sortComponent);
-    remove(this._noEventComponent);
+
+    if (this._noEventComponent){
+      remove(this._noEventComponent);
+    }
 
     if (resetSortType) {
       this._currentSortType = SortType.SORT_DAY;

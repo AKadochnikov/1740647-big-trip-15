@@ -1,6 +1,5 @@
 import TripInfoView from './view/trip-info';
 import NavigationView from './view/navigation';
-//import ControlFiltersView from './view/filter';
 import CostView from './view/cost';
 import {generatePoint} from './mock/event-mock';
 import {render, RenderPosition} from './utils/render';
