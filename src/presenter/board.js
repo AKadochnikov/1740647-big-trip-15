@@ -3,6 +3,7 @@ import EventsListView from '../view/events-list';
 import NoEventView from '../view/no-events';
 import {render, RenderPosition, remove} from '../utils/render';
 import EventPresenter from './event';
+import EventNewPresenter from './event-new';
 import {filter} from '../utils/filter';
 import {sortPrice, sortTime} from '../utils/event';
 import {SortType, UpdateType, UserAction, FilterType} from '../const';
@@ -27,10 +28,18 @@ class Board {
 
     this._eventsModel.addObserver(this._handleModelUpdateType);
     this._filterModel.addObserver(this._handleModelUpdateType);
+
+    this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction);
   }
 
   init(){
     this._renderBoard();
+  }
+
+  createEvent() {
+    this._currentSortType = SortType.SORT_DAY;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._eventNewPresenter.init();
   }
 
   _getEvents() {
@@ -48,6 +57,7 @@ class Board {
   }
 
   _handleModeChange() {
+    this._eventNewPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.resetView());
   }
 
@@ -118,6 +128,7 @@ class Board {
   }
 
   _clearBoard({resetSortType = false} = {}) {
+    this._eventNewPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
 

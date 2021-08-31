@@ -46,4 +46,11 @@ const filterPresenter = new FilterPresenter(controlFilters, filterModel, eventsM
 filterPresenter.init();
 boardPresenter.init();
 
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  console.log(evt.target);
+  evt.target.setAttribute('disabled', 'disabled');
+  evt.preventDefault();
+  boardPresenter.createEvent();
+});
+
 export {townsSet, points};

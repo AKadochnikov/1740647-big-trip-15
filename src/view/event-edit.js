@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import {NEW_EVENT} from '../const';
 
 const getPhotoItems = (items) => {
   let photoTemplate = '';
@@ -95,7 +96,7 @@ const createEventEditTemplate = (item) => (
 );
 
 class EventEdit extends SmartView {
-  constructor(event) {
+  constructor(event = NEW_EVENT, isAddEvent = false) {
     super();
     this._data = EventEdit.parseEventToData(event);
     this._startDatepicker = null;
