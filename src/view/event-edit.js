@@ -35,7 +35,7 @@ const createAvailableOffers = (offers) => {
 };
 
 
-const createEventEditTemplate = (item) => (
+const createEventEditTemplate = (item, isAddEvent) => (
   `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -44,7 +44,7 @@ const createEventEditTemplate = (item) => (
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${item.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1" onkeyup="this.value=''">
                     <datalist id="destination-list-1">
                       ${createDataListOptionsTemplate(townsSet)}
                     </datalist>
@@ -67,8 +67,8 @@ const createEventEditTemplate = (item) => (
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
+                  <button class="event__reset-btn" type="reset">${isAddEvent ? 'Cancel' : 'Delete'}</button>
+                  ${isAddEvent ? '' : '<button class="event__rollup-btn" type="button">'}
                     <span class="visually-hidden">Open event</span>
                   </button>
                 </header>
@@ -101,6 +101,7 @@ class EventEdit extends SmartView {
     this._data = EventEdit.parseEventToData(event);
     this._startDatepicker = null;
     this._endDatepicker = null;
+    this._isAddEvent = isAddEvent;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -123,13 +124,15 @@ class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._data);
+    return createEventEditTemplate(this._data, this._isAddEvent);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setEditClickHandler(this._callback.editClick);
+    if (!this._isAddEvent) {
+      this.setEditClickHandler(this._callback.editClick);
+    }
     this._setStartDatepicker();
     this._setEndDatePicker();
     this.setDeleteClickHandler(this._callback.deleteClick);

@@ -5,7 +5,7 @@ import {render, RenderPosition, remove} from '../utils/render';
 import EventPresenter from './event';
 import EventNewPresenter from './event-new';
 import {filter} from '../utils/filter';
-import {sortPrice, sortTime} from '../utils/event';
+import {sortDay, sortPrice, sortTime} from '../utils/event';
 import {SortType, UpdateType, UserAction, FilterType} from '../const';
 
 class Board {
@@ -48,6 +48,8 @@ class Board {
     const filteredEvents = filter[this._filterType](events);
 
     switch (this._currentSortType) {
+      case SortType.SORT_DAY:
+        return filteredEvents.sort(sortDay);
       case SortType.SORT_TIME:
         return filteredEvents.sort(sortTime);
       case SortType.SORT_PRICE:
