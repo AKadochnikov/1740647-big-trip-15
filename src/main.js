@@ -1,11 +1,13 @@
 import TripInfoView from './view/trip-info';
 import NavigationView from './view/navigation';
-import ControlFiltersView from './view/control-filters';
 import CostView from './view/cost';
 import {generatePoint} from './mock/event-mock';
 import {render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
+import FilterPresenter from './presenter/filter';
 import {sortDay} from './utils/event';
+import EventsModel from './model/events';
+import FilterModel from './model/filter';
 
 const RENDER_COUNT = 20;
 
@@ -21,12 +23,15 @@ const getTownsSet = (items) => {
 
 getTownsSet(points);
 
+const eventsModel = new EventsModel();
+eventsModel.setEvents(points);
+
+const filterModel = new FilterModel();
+
 const tripMain = document.querySelector('.trip-main');
 const controlNavigation = document.querySelector('.trip-controls__navigation');
 const controlFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
-
-const boardPresenter = new BoardPresenter(tripEvents);
 
 render(tripMain, new TripInfoView, RenderPosition.AFTERBEGIN);
 
@@ -34,8 +39,17 @@ const tripInfo = document.querySelector('.trip-main__trip-info');
 
 render(tripInfo, new CostView, RenderPosition.BEFOREEND);
 render(controlNavigation, new NavigationView, RenderPosition.BEFOREEND);
-render(controlFilters, new ControlFiltersView, RenderPosition.BEFOREEND);
 
-boardPresenter.init(points);
+const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel);
+const filterPresenter = new FilterPresenter(controlFilters, filterModel, eventsModel);
+
+filterPresenter.init();
+boardPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.target.setAttribute('disabled', 'disabled');
+  evt.preventDefault();
+  boardPresenter.createEvent();
+});
 
 export {townsSet, points};

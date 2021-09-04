@@ -55,4 +55,6 @@ const sortPrice = (eventA, eventB) => {
   return rankB - rankA;
 };
 
-export {getFormatedDate, getDuration, sortDay, sortTime, sortPrice};
+const isDatesEqual = (dateA, dateB) => dayjs(dateA).isSame(dateB);
+
+export {getFormatedDate, getDuration, sortDay, sortTime, sortPrice, isDatesEqual};

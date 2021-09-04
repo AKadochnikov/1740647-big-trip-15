@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import {NEW_EVENT} from '../const';
 
 const getPhotoItems = (items) => {
   let photoTemplate = '';
@@ -34,7 +35,7 @@ const createAvailableOffers = (offers) => {
 };
 
 
-const createEventEditTemplate = (item) => (
+const createEventEditTemplate = (item, isAddEvent) => (
   `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -43,7 +44,7 @@ const createEventEditTemplate = (item) => (
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${item.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1" onkeyup="this.value=''">
                     <datalist id="destination-list-1">
                       ${createDataListOptionsTemplate(townsSet)}
                     </datalist>
@@ -66,8 +67,8 @@ const createEventEditTemplate = (item) => (
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
+                  <button class="event__reset-btn" type="reset">${isAddEvent ? 'Cancel' : 'Delete'}</button>
+                  ${isAddEvent ? '' : '<button class="event__rollup-btn" type="button">'}
                     <span class="visually-hidden">Open event</span>
                   </button>
                 </header>
@@ -95,13 +96,15 @@ const createEventEditTemplate = (item) => (
 );
 
 class EventEdit extends SmartView {
-  constructor(event) {
+  constructor(event = NEW_EVENT, isAddEvent = false) {
     super();
     this._data = EventEdit.parseEventToData(event);
     this._startDatepicker = null;
     this._endDatepicker = null;
+    this._isAddEvent = isAddEvent;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
     this._typesSelectHandler = this._typesSelectHandler.bind(this);
     this._townsSelectHandler = this._townsSelectHandler.bind(this);
@@ -121,15 +124,30 @@ class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._data);
+    return createEventEditTemplate(this._data, this._isAddEvent);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setEditClickHandler(this._callback.editClick);
+    if (!this._isAddEvent) {
+      this.setEditClickHandler(this._callback.editClick);
+    }
     this._setStartDatepicker();
     this._setEndDatePicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    } else if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
   }
 
   _setStartDatepicker() {
@@ -241,7 +259,18 @@ class EventEdit extends SmartView {
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
+    //TODO: в дальнейшем надо click переделать на submit
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._formSubmitHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   _editClickHandler(evt) {

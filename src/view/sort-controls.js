@@ -1,10 +1,11 @@
 import AbstractView from './abstract';
 import {SortType} from '../const';
+import {isChecked} from '../utils/event-edit-add';
 
-const createSortControlsTemplate = () => (
+const createSortControlsTemplate = (currentSortType) => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
             <div class="trip-sort__item  trip-sort__item--day">
-              <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day"  checked>
+              <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day"  ${isChecked(currentSortType, SortType.SORT_DAY)}>
               <label class="trip-sort__btn" for="sort-day" data-sort-type="${SortType.SORT_DAY}">Day</label>
             </div>
 
@@ -14,12 +15,12 @@ const createSortControlsTemplate = () => (
             </div>
 
             <div class="trip-sort__item  trip-sort__item--time">
-              <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" >
+              <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${isChecked(currentSortType, SortType.SORT_TIME)}>
               <label class="trip-sort__btn" for="sort-time" data-sort-type="${SortType.SORT_TIME}">Time</label>
             </div>
 
             <div class="trip-sort__item  trip-sort__item--price">
-              <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" >
+              <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${isChecked(currentSortType, SortType.SORT_PRICE)}>
               <label class="trip-sort__btn" for="sort-price" data-sort-type="${SortType.SORT_PRICE}">Price</label>
             </div>
 
@@ -31,30 +32,18 @@ const createSortControlsTemplate = () => (
 );
 
 class SortControls extends AbstractView {
-  constructor() {
+  constructor(currentSortType) {
     super();
+    this._currentSortType = currentSortType;
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createSortControlsTemplate();
+    return createSortControlsTemplate(this._currentSortType);
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== 'LABEL') {
-      return;
-    }
-    const formSort = document.querySelector('.trip-events__trip-sort');
-    const sortInputs = formSort.querySelectorAll('input');
-
-    sortInputs.forEach((input) => {
-      input.removeAttribute('checked');
-    });
-
-    const currentInput = evt.target.previousElementSibling;
-    currentInput.setAttribute('checked', 'checked');
-
     evt.preventDefault();
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   }
