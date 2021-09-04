@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax';
 import {getRandomInteger} from '../utils/common';
+import {sortDay} from '../utils/event';
 dayjs.extend(minMax);
 
 const MAX_MINUTE_GAP = 30;
@@ -174,5 +175,6 @@ const generatePoint = () => {
     'type': pointTypes[getRandomInteger(0, pointTypes.length - 1)],
   };
 };
+
 
 export {generatePoint, offersItems, destionations, availableOffers};
