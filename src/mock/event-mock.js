@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax';
 import {getRandomInteger} from '../utils/common';
-import {sortDay} from '../utils/event';
 dayjs.extend(minMax);
 
 const MAX_MINUTE_GAP = 30;
