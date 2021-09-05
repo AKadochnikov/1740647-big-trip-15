@@ -44,6 +44,12 @@ class SortControls extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
+    const currentType = evt.target.dataset.sortType;
+
+    if (currentType === SortType.SORT_EVENT || currentType === SortType.SORT_OFFER) {
+      return;
+    }
+
     evt.preventDefault();
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   }

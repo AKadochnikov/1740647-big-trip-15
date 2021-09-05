@@ -1,7 +1,6 @@
 import TripInfoView from './view/trip-info';
 import NavigationView from './view/navigation';
 import CostView from './view/cost';
-//import NewEventControlView from './view/new-event-control';
 import StatisticsView from './view/statistics';
 import {generatePoint} from './mock/event-mock';
 import {remove, render, RenderPosition} from './utils/render';
@@ -10,8 +9,8 @@ import FilterPresenter from './presenter/filter';
 import {sortDay} from './utils/event';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
-import {MenuItem, UpdateType, FilterType} from './const';
-import {getOffersCollection, countOfferTypeCost} from './utils/statistics';
+import {MenuItem} from './const';
+import {switchAfterLine} from './utils/render';
 
 const RENDER_COUNT = 20;
 
@@ -54,16 +53,16 @@ const handleSiteMenuClick = (menuItem) => {
   const filtersInput = controlFilters.querySelectorAll('.trip-filters__filter-input');
   switch (menuItem) {
     case MenuItem.TABLE:
-      console.log('Меню');
+      switchAfterLine();
       boardPresenter.init();
       remove(statisticsComponent);
       filtersInput.forEach((filter) => filter.removeAttribute('disabled'));
       document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
       break;
     case MenuItem.STATISTICS:
+      switchAfterLine(true);
       statisticsComponent = new StatisticsView(eventsModel.getEvents());
       render(tripEvents, statisticsComponent, RenderPosition.BEFOREEND);
-      console.log('Стата');
       boardPresenter.destroy();
       filtersInput.forEach((filter) => filter.setAttribute('disabled', 'disabled'));
       document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');

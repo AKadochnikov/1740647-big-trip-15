@@ -1,20 +1,16 @@
-//создать массив из типов оффера
-//позже сделать объект из ключей тип офера и значений суммы.
-
-//создать функцию которая будет считать стоимость офферов за все точки путешествия
-
+const getFilterOffersType = (points, offerType) => points.filter((point) => point.type === offerType);
 
 const getOffersCollection = (points) => {
-  const OfferTypes = new Set();
+  const OffersType = new Set();
   points.forEach((point) => {
     if(point.offers !== '') {
-      OfferTypes.add(point.type);
+      OffersType.add(point.type);
     }
   });
-  return OfferTypes;
+  return OffersType;
 };
 
-const getOfferPrice = (point, currentArr) => {
+const getOffersPrice = (point, currentArr) => {
   const currentOffers = point.offers;
 
   if (currentOffers !== '') {
@@ -27,16 +23,29 @@ const getOfferPrice = (point, currentArr) => {
   return currentArr;
 };
 
-
-const getOffersCost = (points, offerType) => {
-  const offerTypeCost = [];
-  const filteredPoints = points.filter((point) => point.type === offerType);
-
-  filteredPoints.forEach((point) => getOfferPrice(point, offerTypeCost));
-
-  return offerTypeCost.reduce((a, b) => a + b);
+const getOfferTime = (points, offerType) => {
+  const offersTime = [];
+  const filteredPoints = getFilterOffersType(points, offerType);
+  filteredPoints.forEach((point) => {
+    const dateFrom = point.date_from;
+    const dateTo = point.date_to;
+    offersTime.push(dateTo.diff(dateFrom));
+  });
+  return offersTime.reduce((a, b) => a + b);
 };
 
-const countOfferTypeCost = (points, offerTypes) => offerTypes.map((type) => getOffersCost(points, type));
+const getOfferCount = (points, offerType) => getFilterOffersType(points, offerType).length;
 
-export {getOffersCollection, getOffersCost, countOfferTypeCost};
+const getOfferCost = (points, offerType) => {
+  const offersTypeCost = [];
+  const filteredPoints = getFilterOffersType(points, offerType);
+
+  filteredPoints.forEach((point) => getOffersPrice(point, offersTypeCost));
+
+  return offersTypeCost.reduce((a, b) => a + b);
+};
+
+const getMapResult = (points, offerTypes, currentFunction) => offerTypes.map((type) => currentFunction(points, type));
+
+
+export {getOffersCollection, getMapResult, getOfferCost, getOfferCount, getOfferTime};

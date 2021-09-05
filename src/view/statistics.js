@@ -1,146 +1,210 @@
 import SmartView from './smart';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {countOfferTypeCost, getOffersCollection} from '../utils/statistics';
+import {
+  getOfferCost,
+  getOfferCount,
+  getMapResult,
+  getOffersCollection,
+  getOfferTime
+} from '../utils/statistics';
+import {formatDayHourMinute} from '../utils/event';
 import {BAR_HEIGHT} from '../const';
 
-const renderMoneyChart = (moneyCtx, offersType, offersPrice) => {
-  return new Chart(moneyCtx, {
-    plugins: [ChartDataLabels],
-    type: 'horizontalBar',
-    data: {
-      labels: offersType,
-      datasets: [{
-        data: offersPrice,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+const renderMoneyChart = (moneyCtx, offersType, offersPrice) => new Chart(moneyCtx, {
+  plugins: [ChartDataLabels],
+  type: 'horizontalBar',
+  data: {
+    labels: offersType,
+    datasets: [{
+      data: offersPrice,
+      backgroundColor: '#ffffff',
+      hoverBackgroundColor: '#ffffff',
+      anchor: 'start',
+    }],
+  },
+  options: {
+    plugins: {
+      datalabels: {
+        font: {
+          size: 13,
+        },
+        color: '#000000',
+        anchor: 'end',
+        align: 'start',
+        formatter: (val) => `€ ${val}`,
+      },
+    },
+    title: {
+      display: true,
+      text: 'MONEY',
+      fontColor: '#000000',
+      fontSize: 23,
+      position: 'left',
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          fontColor: '#000000',
+          padding: 5,
+          fontSize: 13,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        barThickness: 44,
+      }],
+      xAxes: [{
+        ticks: {
+          display: false,
+          beginAtZero: true,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        minBarLength: 50,
       }],
     },
-    options: {
-      plugins: {
-        datalabels: {
-          font: {
-            size: 13,
-          },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
-          formatter: (val) => `€ ${val}`,
+    legend: {
+      display: false,
+    },
+    tooltips: {
+      enabled: false,
+    },
+  },
+});
+
+const renderTypeChart = (typeCtx, offersType, offersCount) => new Chart(typeCtx, {
+  plugins: [ChartDataLabels],
+  type: 'horizontalBar',
+  data: {
+    labels: offersType,
+    datasets: [{
+      data: offersCount,
+      backgroundColor: '#ffffff',
+      hoverBackgroundColor: '#ffffff',
+      anchor: 'start',
+    }],
+  },
+  options: {
+    plugins: {
+      datalabels: {
+        font: {
+          size: 13,
         },
-      },
-      title: {
-        display: true,
-        text: 'MONEY',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          barThickness: 44,
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          minBarLength: 50,
-        }],
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        enabled: false,
+        color: '#000000',
+        anchor: 'end',
+        align: 'start',
+        formatter: (val) => `${val}x`,
       },
     },
-  });
-};
-
-const renderTypeChart = (typeCtx) => {
-  return new Chart(typeCtx, {
-    plugins: [ChartDataLabels],
-    type: 'horizontalBar',
-    data: {
-      labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
-      datasets: [{
-        data: [4, 3, 2, 1, 1, 1],
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+    title: {
+      display: true,
+      text: 'TYPE',
+      fontColor: '#000000',
+      fontSize: 23,
+      position: 'left',
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          fontColor: '#000000',
+          padding: 5,
+          fontSize: 13,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        barThickness: 44,
+      }],
+      xAxes: [{
+        ticks: {
+          display: false,
+          beginAtZero: true,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        minBarLength: 50,
       }],
     },
-    options: {
-      plugins: {
-        datalabels: {
-          font: {
-            size: 13,
-          },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
-          formatter: (val) => `${val}x`,
+    legend: {
+      display: false,
+    },
+    tooltips: {
+      enabled: false,
+    },
+  },
+});
+
+const renderTimeChart = (timeCtx, offersType, offersTime) => new Chart(timeCtx, {
+  plugins: [ChartDataLabels],
+  type: 'horizontalBar',
+  data: {
+    labels: offersType,
+    datasets: [{
+      data: offersTime,
+      backgroundColor: '#ffffff',
+      hoverBackgroundColor: '#ffffff',
+      anchor: 'start',
+    }],
+  },
+  options: {
+    plugins: {
+      datalabels: {
+        font: {
+          size: 13,
         },
-      },
-      title: {
-        display: true,
-        text: 'TYPE',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          barThickness: 44,
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          minBarLength: 50,
-        }],
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        enabled: false,
+        color: '#000000',
+        anchor: 'end',
+        align: 'start',
+        formatter: (val) => `${formatDayHourMinute(val)}`,
       },
     },
-  });
-};
-
-const renderTimeChart = () => {
-
-};
+    title: {
+      display: true,
+      text: 'TIME',
+      fontColor: '#000000',
+      fontSize: 23,
+      position: 'left',
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          fontColor: '#000000',
+          padding: 5,
+          fontSize: 13,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        barThickness: 44,
+      }],
+      xAxes: [{
+        ticks: {
+          display: false,
+          beginAtZero: true,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        minBarLength: 50,
+      }],
+    },
+    legend: {
+      display: false,
+    },
+    tooltips: {
+      enabled: false,
+    },
+  },
+});
 
 
 const createStatisticksTemplate = () => (`<section class="statistics">
@@ -177,18 +241,22 @@ class Statistics extends SmartView {
       this._timeChart = null;
     }
 
-    const OffersCollection = [...getOffersCollection(this._events)];
-    const offersCost = countOfferTypeCost(this._events, OffersCollection);
+    const offersType = [...getOffersCollection(this._events)];
+    const offersCost = getMapResult(this._events, offersType, getOfferCost);
+    const offersCount = getMapResult(this._events, offersType, getOfferCount);
+    const offersTime = getMapResult(this._events, offersType, getOfferTime);
 
     const moneyCtx = this.getElement().querySelector('#money');
     const typeCtx = this.getElement().querySelector('#type');
     const timeCtx = this.getElement().querySelector('#time-spend');
 
-    moneyCtx.height = BAR_HEIGHT * offersCost.length;
+    moneyCtx.height = BAR_HEIGHT * offersType.length;
+    typeCtx.height = BAR_HEIGHT * offersType.length;
+    timeCtx.height = BAR_HEIGHT * offersType.length;
 
-    this._moneyChart = renderMoneyChart(moneyCtx, OffersCollection, offersCost);
-    this._typeChart = renderTypeChart(typeCtx);
-    this._timeChart = renderTimeChart(timeCtx);
+    this._moneyChart = renderMoneyChart(moneyCtx, offersType, offersCost);
+    this._typeChart = renderTypeChart(typeCtx, offersType, offersCount);
+    this._timeChart = renderTimeChart(timeCtx, offersType, offersTime);
   }
 }
 

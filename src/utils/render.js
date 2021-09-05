@@ -5,6 +5,22 @@ const RenderPosition = {
   BEFOREEND: 'beforeend',
 };
 
+const switchAfterLine = (stat = false) => {
+  const header = document.querySelector('.page-header');
+  const body =  document.querySelector('.page-main');
+  const containerHeader = header.querySelector('.page-body__container');
+  const containerBody = body.querySelector('.page-body__container');
+
+  if(stat) {
+    containerHeader.classList.add('no-page-body__container');
+    containerBody.classList.add('no-page-body__container');
+    return;
+  }
+
+  containerHeader.classList.remove('no-page-body__container');
+  containerBody.classList.remove('no-page-body__container');
+};
+
 const render = (container, child, place) => {
 
   if (container instanceof Abstract) {
@@ -63,4 +79,4 @@ const remove = (component) => {
   component.removeElement();
 };
 
-export {RenderPosition, createElement, render, replace, remove};
+export {RenderPosition, createElement, render, replace, remove, switchAfterLine};
