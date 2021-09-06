@@ -61,4 +61,11 @@ const NEW_EVENT = {
   'is_Favorite': false,
 };
 
-export {SortType, UserAction, UpdateType, FilterType, NEW_EVENT};
+const MenuItem = {
+  TABLE: 'TABLE',
+  STATISTICS: 'STATISTICS',
+};
+
+const BAR_HEIGHT = 55;
+
+export {SortType, UserAction, UpdateType, FilterType, NEW_EVENT, MenuItem, BAR_HEIGHT};

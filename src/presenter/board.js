@@ -26,20 +26,28 @@ class Board {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._eventsModel.addObserver(this._handleModelUpdateType);
-    this._filterModel.addObserver(this._handleModelUpdateType);
-
     this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction);
   }
 
   init(){
+    this._eventsModel.addObserver(this._handleModelUpdateType);
+    this._filterModel.addObserver(this._handleModelUpdateType);
     this._renderBoard();
   }
 
-  createEvent() {
+  destroy() {
+    this._clearBoard({resetSortType: true});
+
+    remove(this._eventListComponent);
+
+    this._eventsModel.removeObserver(this._handleModelUpdateType);
+    this._filterModel.removeObserver(this._handleModelUpdateType);
+  }
+
+  createEvent(callback) {
     this._currentSortType = SortType.SORT_DAY;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(callback);
   }
 
   _getEvents() {

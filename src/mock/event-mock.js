@@ -175,4 +175,5 @@ const generatePoint = () => {
   };
 };
 
+
 export {generatePoint, offersItems, destionations, availableOffers};

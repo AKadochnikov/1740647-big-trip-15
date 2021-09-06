@@ -1,13 +1,16 @@
 import TripInfoView from './view/trip-info';
 import NavigationView from './view/navigation';
 import CostView from './view/cost';
+import StatisticsView from './view/statistics';
 import {generatePoint} from './mock/event-mock';
-import {render, RenderPosition} from './utils/render';
+import {remove, render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
 import FilterPresenter from './presenter/filter';
 import {sortDay} from './utils/event';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
+import {MenuItem} from './const';
+import {switchAfterLine} from './utils/render';
 
 const RENDER_COUNT = 20;
 
@@ -36,12 +39,39 @@ const tripEvents = document.querySelector('.trip-events');
 render(tripMain, new TripInfoView, RenderPosition.AFTERBEGIN);
 
 const tripInfo = document.querySelector('.trip-main__trip-info');
+const navigationComponent = new NavigationView();
 
 render(tripInfo, new CostView, RenderPosition.BEFOREEND);
-render(controlNavigation, new NavigationView, RenderPosition.BEFOREEND);
+render(controlNavigation, navigationComponent, RenderPosition.BEFOREEND);
 
 const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel);
 const filterPresenter = new FilterPresenter(controlFilters, filterModel, eventsModel);
+
+let statisticsComponent = null;
+
+const handleSiteMenuClick = (menuItem) => {
+  const filtersInput = controlFilters.querySelectorAll('.trip-filters__filter-input');
+  switch (menuItem) {
+    case MenuItem.TABLE:
+      switchAfterLine();
+      boardPresenter.init();
+      remove(statisticsComponent);
+      filtersInput.forEach((filter) => filter.removeAttribute('disabled'));
+      document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
+      break;
+    case MenuItem.STATISTICS:
+      switchAfterLine(true);
+      statisticsComponent = new StatisticsView(eventsModel.getEvents());
+      render(tripEvents, statisticsComponent, RenderPosition.BEFOREEND);
+      boardPresenter.destroy();
+      filtersInput.forEach((filter) => filter.setAttribute('disabled', 'disabled'));
+      document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
+      break;
+  }
+};
+
+navigationComponent.setMenuClickHandler(handleSiteMenuClick);
+
 
 filterPresenter.init();
 boardPresenter.init();

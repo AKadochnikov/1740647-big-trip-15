@@ -2,11 +2,8 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
-const getDuration = (dateStart, dateEnd) => {
-  const dayjsDateStart = dayjs(dateStart, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  const dayjsDateEnd = dayjs(dateEnd, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  const currentDuration = dayjsDateEnd.diff(dayjsDateStart);
-  const millisecondsDuration = dayjs.duration(currentDuration, 'millisecond');
+const formatDayHourMinute = (timeDuration) => {
+  const millisecondsDuration = dayjs.duration(timeDuration, 'millisecond');
   const minuteDuration = millisecondsDuration.format('mm');
   const hourDuration = millisecondsDuration.format('HH');
   const dayDuration = millisecondsDuration.format('DD');
@@ -19,6 +16,13 @@ const getDuration = (dateStart, dateEnd) => {
     return concatDuration;
   }
   return concatDuration;
+};
+
+const getDuration = (dateStart, dateEnd) => {
+  const dayjsDateStart = dayjs(dateStart, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const dayjsDateEnd = dayjs(dateEnd, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const currentDuration = dayjsDateEnd.diff(dayjsDateStart);
+  return formatDayHourMinute(currentDuration);
 };
 
 const getFormatedDate = (date) => {
@@ -57,4 +61,4 @@ const sortPrice = (eventA, eventB) => {
 
 const isDatesEqual = (dateA, dateB) => dayjs(dateA).isSame(dateB);
 
-export {getFormatedDate, getDuration, sortDay, sortTime, sortPrice, isDatesEqual};
+export {getDateMilliseconds, getFormatedDate, getDuration, sortDay, sortTime, sortPrice, isDatesEqual, formatDayHourMinute};
