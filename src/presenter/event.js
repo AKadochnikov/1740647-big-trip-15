@@ -108,7 +108,7 @@ class Event {
         {},
         this._event,
         {
-          'is_favorite': !this._event.is_favorite,
+          'isFavorite': !this._event.isFavorite,
         },
       ),
     );
@@ -116,8 +116,8 @@ class Event {
 
   _handleFormSubmit(update) {
     const isMinorUpdate =
-      !isDatesEqual(this._event.date_from, update.date_from) ||
-      !isDatesEqual(this._event.date_to, update.date_to);
+      !isDatesEqual(this._event.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this._event.dateTo, update.dateTo);
 
     this._changeData(
       UserAction.UPDATE_EVENT,

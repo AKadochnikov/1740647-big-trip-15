@@ -11,10 +11,23 @@ import EventsModel from './model/events';
 import FilterModel from './model/filter';
 import {MenuItem} from './const';
 import {switchAfterLine} from './utils/render';
+import Api from './api';
+import {AUTHORIZATION, END_POINT} from './const';
 
-const RENDER_COUNT = 20;
 
-const points = new Array(RENDER_COUNT).fill().map(generatePoint).sort(sortDay);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getEvents().then((events) => {
+  console.log(events);
+});
+
+api.getDestinations().then((destinations) => {
+  console.log(destinations);
+});
+
+api.getOffers().then((offers) => {
+  console.log(offers);
+});
 
 const townsSet = new Set();
 
@@ -24,10 +37,9 @@ const getTownsSet = (items) => {
   });
 };
 
-getTownsSet(points);
+//getTownsSet(points);
 
 const eventsModel = new EventsModel();
-eventsModel.setEvents(points);
 
 const filterModel = new FilterModel();
 
@@ -75,6 +87,10 @@ navigationComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
 boardPresenter.init();
+
+api.getEvents().then((events) => {
+  eventsModel.setEvents(events);
+});
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
   evt.target.setAttribute('disabled', 'disabled');

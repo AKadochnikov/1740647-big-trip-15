@@ -52,10 +52,10 @@ const createEventEditTemplate = (item, isAddEvent) => (
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatedDate(item.date_from)}" readonly>
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatedDate(item.dateFrom)}" readonly>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatedDate(item.date_to)}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatedDate(item.dateTo)}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -63,7 +63,7 @@ const createEventEditTemplate = (item, isAddEvent) => (
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${item.base_price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${item.basePrice}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -156,14 +156,14 @@ class EventEdit extends SmartView {
       this._startDatepicker = null;
     }
 
-    if (this._data.date_from) {
+    if (this._data.dateFrom) {
       this._startDatepicker = flatpickr(
         this.getElement().querySelector('#event-start-time-1'),
         {
           dateFormat: 'd/m/y H:i',
           ['time_24hr']: true,
           enableTime: true,
-          defaultDate: getFormatedDate(this._data.date_from),
+          defaultDate: getFormatedDate(this._data.dateFrom),
           onClose: this._startDateChangeHandler,
         },
       );
@@ -176,15 +176,15 @@ class EventEdit extends SmartView {
       this._endDatepicker = null;
     }
 
-    if (this._data.date_to) {
+    if (this._data.dateTo) {
       this._endDatepicker = flatpickr(
         this.getElement().querySelector('#event-end-time-1'),
         {
           dateFormat: 'd/m/y H:i',
           ['time_24hr']: true,
           enableTime: true,
-          defaultDate: getFormatedDate(this._data.date_to),
-          minDate: getFormatedDate(this._data.date_from),
+          defaultDate: getFormatedDate(this._data.dateTo),
+          minDate: getFormatedDate(this._data.dateFrom),
           onClose: this._endDateChangeHandler,
         },
       );
@@ -204,21 +204,21 @@ class EventEdit extends SmartView {
   }
 
   _startDateChangeHandler([userDate]) {
-    const dateDuration = this._data.date_to.diff(dayjs(userDate));
+    const dateDuration = this._data.dateTo.diff(dayjs(userDate));
     if(dateDuration < 0) {
       this.updateData({
-        'date_from': dayjs(userDate),
-        'date_to': dayjs(userDate),
+        'dateFrom': dayjs(userDate),
+        'dateTo': dayjs(userDate),
       });
     }
     this.updateData({
-      'date_from': dayjs(userDate),
+      'dateFrom': dayjs(userDate),
     });
   }
 
   _endDateChangeHandler([userDate]) {
     this.updateData({
-      'date_to': dayjs(userDate),
+      'dateTo': dayjs(userDate),
     }, true);
   }
 
@@ -248,7 +248,7 @@ class EventEdit extends SmartView {
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      'base_price': evt.target.value,
+      'basePrice': evt.target.value,
     }, true);
   }
 

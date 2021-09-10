@@ -27,8 +27,8 @@ const getOfferTime = (points, offerType) => {
   const offersTime = [];
   const filteredPoints = getFilterOffersType(points, offerType);
   filteredPoints.forEach((point) => {
-    const dateFrom = point.date_from;
-    const dateTo = point.date_to;
+    const dateFrom = point.dateFrom;
+    const dateTo = point.dateTo;
     offersTime.push(dateTo.diff(dateFrom));
   });
   return offersTime.reduce((a, b) => a + b);
