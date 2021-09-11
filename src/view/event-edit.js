@@ -308,7 +308,7 @@ class EventEdit extends SmartView {
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      'basePrice': evt.target.value,
+      'basePrice': Number(evt.target.value),
     }, true);
   }
 
