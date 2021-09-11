@@ -23,6 +23,16 @@ class Api {
       .then(Api.toJSON);
   }
 
+  getData() {
+    return Promise.all([
+      this.getOffers(),
+      this.getDestinations(),
+      this.getEvents(),
+    ]).catch((err) => {
+      throw new Error(err);
+    });
+  }
+
   updateEvent(event) {
     return this._load({
       url: `points/${event.id}`,

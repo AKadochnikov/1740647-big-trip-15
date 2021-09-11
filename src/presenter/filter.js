@@ -45,6 +45,22 @@ class Filter {
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
+  filtersDisabled() {
+    if(this._filterComponent === null) {
+      return;
+    }
+    const filterInputs = this._filterComponent.getElement().querySelectorAll('.trip-filters__filter-input');
+    filterInputs.forEach((filter) => filter.setAttribute('disabled', 'disabled'));
+  }
+
+  filtersEnabled() {
+    if(this._filterComponent === null) {
+      return;
+    }
+    const filterInputs = this._filterComponent.getElement().querySelectorAll('.trip-filters__filter-input');
+    filterInputs.forEach((filter) => filter.removeAttribute('disabled'));
+  }
+
   _getFilters() {
     return [
       {

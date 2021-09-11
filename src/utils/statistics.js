@@ -1,9 +1,17 @@
 const getFilterOffersType = (points, offerType) => points.filter((point) => point.type === offerType);
 
-const getOffersCollection = (points) => {
+const getOffersCollection = (points, allTypes = false) => {
   const OffersType = new Set();
+
+  if(allTypes) {
+    points.forEach((point) => {
+      OffersType.add(point.type);
+    });
+    return OffersType;
+  }
+
   points.forEach((point) => {
-    if(point.offers !== '') {
+    if(point.offers.length !== 0) {
       OffersType.add(point.type);
     }
   });
@@ -41,7 +49,9 @@ const getOfferCost = (points, offerType) => {
   const filteredPoints = getFilterOffersType(points, offerType);
 
   filteredPoints.forEach((point) => getOffersPrice(point, offersTypeCost));
-
+  if(offersTypeCost.length === 0) {
+    return;
+  }
   return offersTypeCost.reduce((a, b) => a + b);
 };
 

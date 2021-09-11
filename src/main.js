@@ -2,14 +2,14 @@ import TripInfoView from './view/trip-info';
 import NavigationView from './view/navigation';
 import CostView from './view/cost';
 import StatisticsView from './view/statistics';
-import {generatePoint} from './mock/event-mock';
 import {remove, render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
 import FilterPresenter from './presenter/filter';
-import {sortDay} from './utils/event';
+import OffersModel from './model/offers';
+import DestinationsModel from './model/destinations';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
-import {MenuItem} from './const';
+import {MenuItem, UpdateType} from './const';
 import {switchAfterLine} from './utils/render';
 import Api from './api';
 import {AUTHORIZATION, END_POINT} from './const';
@@ -17,30 +17,9 @@ import {AUTHORIZATION, END_POINT} from './const';
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-api.getEvents().then((events) => {
-  console.log(events);
-});
-
-api.getDestinations().then((destinations) => {
-  console.log(destinations);
-});
-
-api.getOffers().then((offers) => {
-  console.log(offers);
-});
-
-const townsSet = new Set();
-
-const getTownsSet = (items) => {
-  items.forEach((item) => {
-    townsSet.add(item.destination.name);
-  });
-};
-
-//getTownsSet(points);
-
 const eventsModel = new EventsModel();
-
+const offersModel = new OffersModel();
+const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
 const tripMain = document.querySelector('.trip-main');
@@ -56,19 +35,19 @@ const navigationComponent = new NavigationView();
 render(tripInfo, new CostView, RenderPosition.BEFOREEND);
 render(controlNavigation, navigationComponent, RenderPosition.BEFOREEND);
 
-const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel);
+const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(controlFilters, filterModel, eventsModel);
 
 let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
-  const filtersInput = controlFilters.querySelectorAll('.trip-filters__filter-input');
   switch (menuItem) {
     case MenuItem.TABLE:
       switchAfterLine();
+      boardPresenter.destroy();
       boardPresenter.init();
       remove(statisticsComponent);
-      filtersInput.forEach((filter) => filter.removeAttribute('disabled'));
+      filterPresenter.filtersEnabled();
       document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
       break;
     case MenuItem.STATISTICS:
@@ -76,26 +55,33 @@ const handleSiteMenuClick = (menuItem) => {
       statisticsComponent = new StatisticsView(eventsModel.getEvents());
       render(tripEvents, statisticsComponent, RenderPosition.BEFOREEND);
       boardPresenter.destroy();
-      filtersInput.forEach((filter) => filter.setAttribute('disabled', 'disabled'));
+      filterPresenter.filtersDisabled();
       document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
       break;
   }
 };
 
-navigationComponent.setMenuClickHandler(handleSiteMenuClick);
-
-
 filterPresenter.init();
+filterPresenter.filtersDisabled();
 boardPresenter.init();
+document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
 
-api.getEvents().then((events) => {
-  eventsModel.setEvents(events);
-});
+api.getData()
+  .then(([offers, destinations, events]) => {
+    offersModel.setOffers(offers);
+    destinationsModel.setDestinations(destinations);
+    eventsModel.setEvents(UpdateType.INIT, events);
+    navigationComponent.setMenuClickHandler(handleSiteMenuClick);
+    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
+  })
+  .catch(() => {
+    filterPresenter.filtersDisabled();
+    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
+    eventsModel.setEvents(UpdateType.INIT, []);
+  });
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
   evt.target.setAttribute('disabled', 'disabled');
   evt.preventDefault();
   boardPresenter.createEvent();
 });
-
-export {townsSet, points};

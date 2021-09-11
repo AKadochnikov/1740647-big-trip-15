@@ -18,6 +18,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const FilterType = {
@@ -31,28 +32,7 @@ const NEW_EVENT = {
   'dateFrom': dayjs(),
   'dateTo': dayjs(),
   'type': 'taxi',
-  'offers': [
-    {
-      title: 'Upgrade to a business class',
-      price: 190,
-    },
-    {
-      title: 'Choose the radio station',
-      price: 30,
-    },
-    {
-      title: 'Choose temperature',
-      price: 170,
-    },
-    {
-      title: 'Drive quickly, I\'m in a hurry',
-      price: 100,
-    },
-    {
-      title: 'Drive slowly',
-      price: 110,
-    },
-  ],
+  'offers': [],
   'destination': {
     'description': '',
     'name': '',

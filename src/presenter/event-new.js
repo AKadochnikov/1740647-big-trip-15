@@ -4,9 +4,11 @@ import {UserAction, UpdateType} from '../const.js';
 import {getRandomInteger} from '../utils/common';
 
 class EventNew {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, changeData, offersModel, destinationsModel) {
     this._taskListContainer = eventListContainer;
     this._changeData = changeData;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._eventEditComponent = null;
 
@@ -19,8 +21,11 @@ class EventNew {
     if (this._eventEditComponent !== null) {
       return;
     }
-
-    this._eventEditComponent = new EventEditView(undefined, true);
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
+    console.log('initNew');
+    console.log(offers);
+    this._eventEditComponent = new EventEditView(undefined, offers, destinations, true);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -44,7 +49,7 @@ class EventNew {
     this._changeData(
       UserAction.ADD_EVENT,
       UpdateType.MINOR,
-      Object.assign({id: `${getRandomInteger(0, 100000)}`}, event),
+      Object.assign(event),
     );
     this.destroy();
   }

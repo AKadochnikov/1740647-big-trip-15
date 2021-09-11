@@ -1,11 +1,8 @@
-import {townsSet} from '../main.js';
 import SmartView from './smart';
 import {createDataListOptionsTemplate, createTypeTemplate} from '../utils/event-edit-add';
 import {getFormatedDate} from '../utils/event';
-import {destionations, availableOffers} from '../mock/event-mock';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
-
 import 'flatpickr/dist/flatpickr.min.css';
 import {NEW_EVENT} from '../const';
 
@@ -18,15 +15,41 @@ const getPhotoItems = (items) => {
   return photoTemplate;
 };
 
-const createAvailableOffers = (offers) => {
+const getOffers = (item, offers) => {
+  let currentOffer = [];
+  offers.forEach((offer) => {
+    if (item.type === offer.type) {
+      currentOffer = offer.offers;
+      return currentOffer;
+    }
+  });
+  return currentOffer;
+};
+
+const isChecked = (itemOffers, offerTitle) => {
+  let booleanResult = false;
+  if(itemOffers.length > 0) {
+    itemOffers.forEach((itemOffer) => {
+      if(itemOffer.title === offerTitle) {
+        booleanResult = true;
+      }
+      return booleanResult;
+    });
+  }
+  return booleanResult;
+};
+
+const createAvailableOffers = (item, offers, isAddEvent) => {
+  const currentOffers = getOffers(item, offers);
+
   let offersTemplate = '';
-  offers.forEach((currentOffer) => {
+  currentOffers.forEach((offer) => {
     const currentOffersTemplate = `<div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${currentOffer.offer_id}-1" type="checkbox" name="event-offer-${currentOffer.offer_id}">
-                        <label class="event__offer-label" for="event-offer-${currentOffer.offer_id}-1">
-                          <span class="event__offer-title">${currentOffer.title}</span>
+                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" ${isAddEvent ? '' : `${isChecked(item.offers, offer.title) ? 'checked' : ''}`}>
+                        <label class="event__offer-label" for="event-offer-${offer.title}-1">
+                          <span class="event__offer-title">${offer.title}</span>
                           &plus;&euro;&nbsp;
-                          <span class="event__offer-price">${currentOffer.price}</span>
+                          <span class="event__offer-price">${offer.price}</span>
                         </label>
                       </div>`;
     offersTemplate += currentOffersTemplate;
@@ -34,8 +57,19 @@ const createAvailableOffers = (offers) => {
   return offersTemplate;
 };
 
+const createOffersTemplate = (item, offers) => {
+  const currentOffers = getOffers(item, offers);
+  return `${currentOffers.length > 0 ? `<section class="event__section  event__section--offers">
+                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-const createEventEditTemplate = (item, isAddEvent) => (
+                    <div class="event__available-offers">
+                    ${createAvailableOffers(item, offers)}
+</div>
+</section>`: ''}`;
+};
+
+
+const createEventEditTemplate = (item, isAddEvent, offers, destinations) => (
   `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -44,9 +78,9 @@ const createEventEditTemplate = (item, isAddEvent) => (
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${item.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1" onkeyup="this.value=''">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name ? item.destination.name : destinations[0].name}" list="destination-list-1" onkeyup="this.value=''" required>
                     <datalist id="destination-list-1">
-                      ${createDataListOptionsTemplate(townsSet)}
+                      ${createDataListOptionsTemplate(destinations)}
                     </datalist>
                   </div>
 
@@ -73,13 +107,7 @@ const createEventEditTemplate = (item, isAddEvent) => (
                   </button>
                 </header>
                 <section class="event__details">
-                  ${item.offers ? `<section class="event__section  event__section--offers">
-                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-                    <div class="event__available-offers">
-                    ${createAvailableOffers(item.offers)}
-                    </div>
-                  </section>`: ''}
+                  ${createOffersTemplate(item, offers, isAddEvent)}
 
                  ${item.destination.description ? `<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -96,9 +124,11 @@ const createEventEditTemplate = (item, isAddEvent) => (
 );
 
 class EventEdit extends SmartView {
-  constructor(event = NEW_EVENT, isAddEvent = false) {
+  constructor(event = NEW_EVENT, offers, destinations, isAddEvent = false) {
     super();
     this._data = EventEdit.parseEventToData(event);
+    this._offers = offers;
+    this._destinations = destinations;
     this._startDatepicker = null;
     this._endDatepicker = null;
     this._isAddEvent = isAddEvent;
@@ -111,6 +141,7 @@ class EventEdit extends SmartView {
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
+    this._offersCheckChangeHandler = this._offersCheckChangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setStartDatepicker();
@@ -124,7 +155,7 @@ class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._data, this._isAddEvent);
+    return createEventEditTemplate(this._data, this._isAddEvent, this._offers, this._destinations);
   }
 
   restoreHandlers() {
@@ -201,6 +232,35 @@ class EventEdit extends SmartView {
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
+
+    const offers = this.getElement().querySelector('.event__available-offers');
+
+    if(offers !== null) {
+      offers.addEventListener('change', this._offersCheckChangeHandler);
+    }
+  }
+
+  _offersCheckChangeHandler(evt) {
+    if(!evt.target.checked) {
+      evt.target.removeAttribute('checked');
+    } else {
+      evt.target.setAttribute('checked', 'checked');
+    }
+    const newOffers = [];
+
+    const checkedOffer = document.querySelectorAll('.event__offer-checkbox:checked');
+    checkedOffer.forEach((item) =>{
+      const contentTitle = item.nextElementSibling.querySelector('.event__offer-title').textContent;
+      const contentPrice = item.nextElementSibling.querySelector('.event__offer-price').textContent;
+      newOffers.push({
+        title: contentTitle,
+        price: Number(contentPrice),
+      });
+    });
+
+    this.updateData({
+      offers: newOffers,
+    }, true);
   }
 
   _startDateChangeHandler([userDate]) {
@@ -224,11 +284,11 @@ class EventEdit extends SmartView {
 
   _typesSelectHandler(evt) {
     evt.preventDefault();
-    availableOffers.forEach((item) => {
+    this._offers.forEach((item) => {
       if(item.type === evt.target.value) {
         this.updateData({
           type: item.type,
-          offers: item.offers,
+          offers: [],
         });
       }
     });
@@ -236,7 +296,7 @@ class EventEdit extends SmartView {
 
   _townsSelectHandler(evt) {
     evt.preventDefault();
-    destionations.forEach((item) => {
+    this._destinations.forEach((item) => {
       if(item.name === evt.target.value){
         this.updateData({
           destination: item,

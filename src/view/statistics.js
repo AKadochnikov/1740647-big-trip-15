@@ -242,21 +242,22 @@ class Statistics extends SmartView {
     }
 
     const offersType = [...getOffersCollection(this._events)];
+    const allTypes = [...getOffersCollection(this._events, true)];
     const offersCost = getMapResult(this._events, offersType, getOfferCost);
-    const offersCount = getMapResult(this._events, offersType, getOfferCount);
-    const offersTime = getMapResult(this._events, offersType, getOfferTime);
+    const offersCount = getMapResult(this._events, allTypes, getOfferCount);
+    const offersTime = getMapResult(this._events, allTypes, getOfferTime);
 
     const moneyCtx = this.getElement().querySelector('#money');
     const typeCtx = this.getElement().querySelector('#type');
     const timeCtx = this.getElement().querySelector('#time-spend');
 
     moneyCtx.height = BAR_HEIGHT * offersType.length;
-    typeCtx.height = BAR_HEIGHT * offersType.length;
-    timeCtx.height = BAR_HEIGHT * offersType.length;
+    typeCtx.height = BAR_HEIGHT * allTypes.length;
+    timeCtx.height = BAR_HEIGHT * allTypes.length;
 
     this._moneyChart = renderMoneyChart(moneyCtx, offersType, offersCost);
-    this._typeChart = renderTypeChart(typeCtx, offersType, offersCount);
-    this._timeChart = renderTimeChart(timeCtx, offersType, offersTime);
+    this._typeChart = renderTypeChart(typeCtx, allTypes, offersCount);
+    this._timeChart = renderTimeChart(timeCtx, allTypes, offersTime);
   }
 }
 
