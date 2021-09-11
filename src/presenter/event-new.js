@@ -1,7 +1,6 @@
 import EventEditView from '../view/event-edit';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
-import {getRandomInteger} from '../utils/common';
 
 class EventNew {
   constructor(eventListContainer, changeData, offersModel, destinationsModel) {
@@ -23,8 +22,6 @@ class EventNew {
     }
     const offers = this._offersModel.getOffers();
     const destinations = this._destinationsModel.getDestinations();
-    console.log('initNew');
-    console.log(offers);
     this._eventEditComponent = new EventEditView(undefined, offers, destinations, true);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
