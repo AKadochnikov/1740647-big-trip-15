@@ -10,10 +10,12 @@ const Mode = {
 };
 
 class Event {
-  constructor(eventListContainer, changeDate,  changeMode) {
+  constructor(eventListContainer, changeDate,  changeMode, offers, destinations) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeDate;
     this._changeMode = changeMode;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -29,12 +31,11 @@ class Event {
 
   init(event) {
     this._event = event;
-
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventEditComponent = new EventEditView(event, this._offers, this._destinations);
 
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventComponent.setEditClickHandler(this._handleEditClick);
@@ -108,7 +109,7 @@ class Event {
         {},
         this._event,
         {
-          'is_favorite': !this._event.is_favorite,
+          'isFavorite': !this._event.isFavorite,
         },
       ),
     );
@@ -116,8 +117,8 @@ class Event {
 
   _handleFormSubmit(update) {
     const isMinorUpdate =
-      !isDatesEqual(this._event.date_from, update.date_from) ||
-      !isDatesEqual(this._event.date_to, update.date_to);
+      !isDatesEqual(this._event.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this._event.dateTo, update.dateTo);
 
     this._changeData(
       UserAction.UPDATE_EVENT,

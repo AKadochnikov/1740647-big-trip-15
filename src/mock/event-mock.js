@@ -164,12 +164,12 @@ const generatePoint = () => {
   const getDateFrom = () => dayjs.min(date1, date2);
   const getDateTo = () => dayjs.max(date1, date2);
   return {
-    'base_price': getRandomInteger(500, 2000),
-    'date_from': getDateFrom(),
-    'date_to': getDateTo(),
+    'basePrice': getRandomInteger(500, 2000),
+    'dateFrom': getDateFrom(),
+    'dateTo': getDateTo(),
     'destination': destionations[getRandomInteger(0, destionations.length - 1)],
     'id': `${getRandomInteger(0, 100000)}`,
-    'is_favorite': Boolean(getRandomInteger(0, 1)),
+    'isFavorite': Boolean(getRandomInteger(0, 1)),
     'offers': availableOffers[getRandomInteger(0, availableOffers.length - 1)].offers,
     'type': pointTypes[getRandomInteger(0, pointTypes.length - 1)],
   };

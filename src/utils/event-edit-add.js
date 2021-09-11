@@ -2,9 +2,13 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
 
-const createDataListOptionsTemplate = (townItems) => {
+const createDataListOptionsTemplate = (destinations) => {
+  const towns = new Set();
+  destinations.forEach((item) => {
+    towns.add(item.name);
+  });
   let optionTemplate = '';
-  townItems.forEach((item) => {
+  towns.forEach((item) => {
     const currentOption = `<option value="${item}"></option>`;
     optionTemplate += currentOption;
   });

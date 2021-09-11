@@ -1,32 +1,40 @@
 import SortControlsView from '../view/sort-controls';
 import EventsListView from '../view/events-list';
 import NoEventView from '../view/no-events';
-import {render, RenderPosition, remove} from '../utils/render';
+import LoadingView from '../view/loading';
 import EventPresenter from './event';
 import EventNewPresenter from './event-new';
+import {render, RenderPosition, remove} from '../utils/render';
 import {filter} from '../utils/filter';
 import {sortDay, sortPrice, sortTime} from '../utils/event';
 import {SortType, UpdateType, UserAction, FilterType} from '../const';
 
+
 class Board {
-  constructor(boardContainer, eventsModel, filterModel) {
+  constructor(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api) {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
     this._boardContainer = boardContainer;
     this._eventListComponent = new EventsListView();
     this._eventPresenter = new Map();
     this._filterType = FilterType.EVERYTHING;
     this._currentSortType = SortType.SORT_DAY;
+    this._isLoading = true;
+    this._api = api;
 
     this._sortComponent = null;
     this._noEventComponent = null;
+
+    this._loadingComponent = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelUpdateType = this._handleModelUpdateType.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction);
+    this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction, this._offersModel, this._destinationsModel);
   }
 
   init(){
@@ -74,7 +82,9 @@ class Board {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this._eventsModel.updateEvents(updateType, update);
+        this._api.updateEvent(update).then((response) => {
+          this._eventsModel.updateEvents(updateType, response);
+        });
         break;
       case UserAction.ADD_EVENT:
         this._eventsModel.addEvent(updateType, update);
@@ -96,6 +106,11 @@ class Board {
         break;
       case UpdateType.MAJOR:
         this._clearBoard({resetSortType: true});
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderBoard();
         break;
     }
@@ -123,13 +138,19 @@ class Board {
   }
 
   _renderEvent(event) {
-    const eventPresenter = new EventPresenter(this._eventListComponent, this._handleViewAction, this._handleModeChange);
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
+    const eventPresenter = new EventPresenter(this._eventListComponent, this._handleViewAction, this._handleModeChange, offers, destinations);
     eventPresenter.init(event);
     this._eventPresenter.set(event.id, eventPresenter);
   }
 
   _renderEvents(events) {
     events.forEach((event) => this._renderEvent(event));
+  }
+
+  _renderLoading() {
+    render(this._boardContainer, this._loadingComponent, RenderPosition.BEFOREEND);
   }
 
   _renderNoEvents() {
@@ -142,6 +163,7 @@ class Board {
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
 
+    remove(this._loadingComponent);
     remove(this._sortComponent);
 
     if (this._noEventComponent){
@@ -154,6 +176,11 @@ class Board {
   }
 
   _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const events = this._getEvents();
     if (events.length === 0) {
       this._renderNoEvents();

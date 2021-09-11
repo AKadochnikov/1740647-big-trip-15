@@ -18,6 +18,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const FilterType = {
@@ -27,32 +28,11 @@ const FilterType = {
 };
 
 const NEW_EVENT = {
-  'base_price': '',
-  'date_from': dayjs(),
-  'date_to': dayjs(),
+  'basePrice': '',
+  'dateFrom': dayjs(),
+  'dateTo': dayjs(),
   'type': 'taxi',
-  'offers': [
-    {
-      title: 'Upgrade to a business class',
-      price: 190,
-    },
-    {
-      title: 'Choose the radio station',
-      price: 30,
-    },
-    {
-      title: 'Choose temperature',
-      price: 170,
-    },
-    {
-      title: 'Drive quickly, I\'m in a hurry',
-      price: 100,
-    },
-    {
-      title: 'Drive slowly',
-      price: 110,
-    },
-  ],
+  'offers': [],
   'destination': {
     'description': '',
     'name': '',
@@ -68,4 +48,20 @@ const MenuItem = {
 
 const BAR_HEIGHT = 55;
 
-export {SortType, UserAction, UpdateType, FilterType, NEW_EVENT, MenuItem, BAR_HEIGHT};
+
+const METHOD = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+const SUCCESS_STATUS_RANGE = {
+  MIN: 200,
+  MAX: 299,
+};
+
+const AUTHORIZATION = 'Basic ff3ay7rSL9tt9vk7f';
+const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+
+export {SortType, UserAction, UpdateType, FilterType,
+  NEW_EVENT, MenuItem, BAR_HEIGHT, METHOD,
+  SUCCESS_STATUS_RANGE, AUTHORIZATION, END_POINT};
