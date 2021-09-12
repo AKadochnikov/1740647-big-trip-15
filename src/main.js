@@ -1,6 +1,4 @@
-import TripInfoView from './view/trip-info';
 import NavigationView from './view/navigation';
-import CostView from './view/cost';
 import StatisticsView from './view/statistics';
 import {remove, render, RenderPosition} from './utils/render';
 import BoardPresenter from './presenter/board';
@@ -22,17 +20,12 @@ const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
-const tripMain = document.querySelector('.trip-main');
 const controlNavigation = document.querySelector('.trip-controls__navigation');
 const controlFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
 
-render(tripMain, new TripInfoView, RenderPosition.AFTERBEGIN);
-
-const tripInfo = document.querySelector('.trip-main__trip-info');
 const navigationComponent = new NavigationView();
 
-render(tripInfo, new CostView, RenderPosition.BEFOREEND);
 render(controlNavigation, navigationComponent, RenderPosition.BEFOREEND);
 
 const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel, offersModel, destinationsModel, api);

@@ -1,13 +1,9 @@
 import EventView from '../view/event';
 import EventEditView from '../view/event-edit';
 import {render, RenderPosition, replace, remove} from '../utils/render';
-import {UserAction, UpdateType} from '../const';
+import {UserAction, UpdateType, State, Mode} from '../const';
 import {isDatesEqual} from '../utils/event';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 class Event {
   constructor(eventListContainer, changeDate,  changeMode, offers, destinations) {
@@ -53,7 +49,8 @@ class Event {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._eventEditComponent, prevEventEditComponent);
+      replace(this._eventComponent, prevEventEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -68,6 +65,39 @@ class Event {
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToEvent();
+    }
+  }
+
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._eventEditComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -125,7 +155,6 @@ class Event {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this._replaceFormToEvent();
   }
 
   _handleDeleteClick(event) {
