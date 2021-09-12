@@ -87,8 +87,6 @@ const State = {
   ABORTING: 'ABORTING',
 };
 
-
-
 export {SortType, UserAction, UpdateType, FilterType,
   NEW_EVENT, MenuItem, BAR_HEIGHT, Method,
   SuccessStatusRange, AUTHORIZATION, END_POINT, State, Mode, SHAKE_ANIMATION_TIMEOUT};
