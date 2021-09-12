@@ -12,21 +12,18 @@ import {switchAfterLine} from './utils/render';
 import Api from './api';
 import {AUTHORIZATION, END_POINT} from './const';
 
-
 const api = new Api(END_POINT, AUTHORIZATION);
+
+const controlNavigation = document.querySelector('.trip-controls__navigation');
+const controlFilters = document.querySelector('.trip-controls__filters');
+const tripEvents = document.querySelector('.trip-events');
 
 const eventsModel = new EventsModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
-const controlNavigation = document.querySelector('.trip-controls__navigation');
-const controlFilters = document.querySelector('.trip-controls__filters');
-const tripEvents = document.querySelector('.trip-events');
-
 const navigationComponent = new NavigationView();
-
-render(controlNavigation, navigationComponent, RenderPosition.BEFOREEND);
 
 const boardPresenter = new BoardPresenter(tripEvents, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(controlFilters, filterModel, eventsModel);
@@ -54,6 +51,7 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
+render(controlNavigation, navigationComponent, RenderPosition.BEFOREEND);
 filterPresenter.init();
 filterPresenter.filtersDisabled();
 boardPresenter.init();

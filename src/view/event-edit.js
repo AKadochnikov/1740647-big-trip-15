@@ -97,7 +97,7 @@ const createEventEditTemplate = (item, isAddEvent, offers, destinations) => (
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${item.basePrice}" ${item.isDisabled ? 'disabled' : ''}>
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${item.basePrice}" ${item.isDisabled ? 'disabled' : ''} required>
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit" ${item.isDisabled ? 'disabled' : ''}>${item.isSaving ? 'Saving...' : 'Save'}</button>

@@ -11,15 +11,31 @@ import {
 import {formatDayHourMinute} from '../utils/event';
 import {BAR_HEIGHT} from '../const';
 
-const renderMoneyChart = (moneyCtx, offersType, offersPrice) => new Chart(moneyCtx, {
+const StatisticsConfig = {
+  FORMAT_MONEY : (val) => `€ ${val}`,
+  FORMAT_TYPE : (val) => `${val}x`,
+  FORMAT_TIME : (val) => `${formatDayHourMinute(val)}`,
+  MONEY_TEXT : 'MONEY',
+  TYPE_TEXT : 'TYPE',
+  TIME_TEXT : 'TIME',
+  WHITE_COLOR : '#ffffff',
+  BLACK_COLOR : '#000000',
+  FONT_SIZE : 13,
+  TITLE_FONT_SIZE : 23,
+  PADDING : 5,
+  BAR_THICKNESS : 44,
+  MIN_BAR_LENGTH : 50,
+};
+
+const renderChart = (Ctx, offersType, offersData, format, statisticsText) => new Chart(Ctx, {
   plugins: [ChartDataLabels],
   type: 'horizontalBar',
   data: {
     labels: offersType,
     datasets: [{
-      data: offersPrice,
-      backgroundColor: '#ffffff',
-      hoverBackgroundColor: '#ffffff',
+      data: offersData,
+      backgroundColor: StatisticsConfig.WHITE_COLOR,
+      hoverBackgroundColor: StatisticsConfig.WHITE_COLOR,
       anchor: 'start',
     }],
   },
@@ -27,33 +43,33 @@ const renderMoneyChart = (moneyCtx, offersType, offersPrice) => new Chart(moneyC
     plugins: {
       datalabels: {
         font: {
-          size: 13,
+          size: StatisticsConfig.FONT_SIZE,
         },
-        color: '#000000',
+        color: StatisticsConfig.BLACK_COLOR,
         anchor: 'end',
         align: 'start',
-        formatter: (val) => `€ ${val}`,
+        formatter: format,
       },
     },
     title: {
       display: true,
-      text: 'MONEY',
-      fontColor: '#000000',
-      fontSize: 23,
+      text: statisticsText,
+      fontColor: StatisticsConfig.BLACK_COLOR,
+      fontSize: StatisticsConfig.TITLE_FONT_SIZE,
       position: 'left',
     },
     scales: {
       yAxes: [{
         ticks: {
-          fontColor: '#000000',
-          padding: 5,
-          fontSize: 13,
+          fontColor: StatisticsConfig.BLACK_COLOR,
+          padding: StatisticsConfig.PADDING,
+          fontSize: StatisticsConfig.FONT_SIZE,
         },
         gridLines: {
           display: false,
           drawBorder: false,
         },
-        barThickness: 44,
+        barThickness: StatisticsConfig.BAR_THICKNESS,
       }],
       xAxes: [{
         ticks: {
@@ -64,7 +80,7 @@ const renderMoneyChart = (moneyCtx, offersType, offersPrice) => new Chart(moneyC
           display: false,
           drawBorder: false,
         },
-        minBarLength: 50,
+        minBarLength: StatisticsConfig.MIN_BAR_LENGTH,
       }],
     },
     legend: {
@@ -76,138 +92,7 @@ const renderMoneyChart = (moneyCtx, offersType, offersPrice) => new Chart(moneyC
   },
 });
 
-const renderTypeChart = (typeCtx, offersType, offersCount) => new Chart(typeCtx, {
-  plugins: [ChartDataLabels],
-  type: 'horizontalBar',
-  data: {
-    labels: offersType,
-    datasets: [{
-      data: offersCount,
-      backgroundColor: '#ffffff',
-      hoverBackgroundColor: '#ffffff',
-      anchor: 'start',
-    }],
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 13,
-        },
-        color: '#000000',
-        anchor: 'end',
-        align: 'start',
-        formatter: (val) => `${val}x`,
-      },
-    },
-    title: {
-      display: true,
-      text: 'TYPE',
-      fontColor: '#000000',
-      fontSize: 23,
-      position: 'left',
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: '#000000',
-          padding: 5,
-          fontSize: 13,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        barThickness: 44,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        minBarLength: 50,
-      }],
-    },
-    legend: {
-      display: false,
-    },
-    tooltips: {
-      enabled: false,
-    },
-  },
-});
-
-const renderTimeChart = (timeCtx, offersType, offersTime) => new Chart(timeCtx, {
-  plugins: [ChartDataLabels],
-  type: 'horizontalBar',
-  data: {
-    labels: offersType,
-    datasets: [{
-      data: offersTime,
-      backgroundColor: '#ffffff',
-      hoverBackgroundColor: '#ffffff',
-      anchor: 'start',
-    }],
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 13,
-        },
-        color: '#000000',
-        anchor: 'end',
-        align: 'start',
-        formatter: (val) => `${formatDayHourMinute(val)}`,
-      },
-    },
-    title: {
-      display: true,
-      text: 'TIME',
-      fontColor: '#000000',
-      fontSize: 23,
-      position: 'left',
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: '#000000',
-          padding: 5,
-          fontSize: 13,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        barThickness: 44,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        minBarLength: 50,
-      }],
-    },
-    legend: {
-      display: false,
-    },
-    tooltips: {
-      enabled: false,
-    },
-  },
-});
-
-
-const createStatisticksTemplate = () => (`<section class="statistics">
+const createStatisticsTemplate = () => (`<section class="statistics">
           <h2 class="visually-hidden">Trip statistics</h2>
 
           <div class="statistics__item">
@@ -231,7 +116,7 @@ class Statistics extends SmartView {
   }
 
   getTemplate() {
-    return createStatisticksTemplate();
+    return createStatisticsTemplate();
   }
 
   _setCharts() {
@@ -255,9 +140,9 @@ class Statistics extends SmartView {
     typeCtx.height = BAR_HEIGHT * allTypes.length;
     timeCtx.height = BAR_HEIGHT * allTypes.length;
 
-    this._moneyChart = renderMoneyChart(moneyCtx, offersType, offersCost);
-    this._typeChart = renderTypeChart(typeCtx, allTypes, offersCount);
-    this._timeChart = renderTimeChart(timeCtx, allTypes, offersTime);
+    this._moneyChart = renderChart(moneyCtx, offersType, offersCost, StatisticsConfig.FORMAT_MONEY, StatisticsConfig.MONEY_TEXT);
+    this._typeChart = renderChart(typeCtx, allTypes, offersCount, StatisticsConfig.FORMAT_TYPE, StatisticsConfig.TYPE_TEXT);
+    this._timeChart = renderChart(timeCtx, allTypes, offersTime, StatisticsConfig.FORMAT_TIME, StatisticsConfig.TIME_TEXT);
   }
 }
 

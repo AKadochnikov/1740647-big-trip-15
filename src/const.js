@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 const AUTHORIZATION = 'Basic ff3ay7rSL9tt9vk7f';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const ONE_THOUSAND_MILLISEC = 1000;
 const BAR_HEIGHT = 55;
 
 const NEW_EVENT = {
@@ -89,4 +90,4 @@ const State = {
 
 export {SortType, UserAction, UpdateType, FilterType,
   NEW_EVENT, MenuItem, BAR_HEIGHT, Method,
-  SuccessStatusRange, AUTHORIZATION, END_POINT, State, Mode, SHAKE_ANIMATION_TIMEOUT};
+  SuccessStatusRange, AUTHORIZATION, END_POINT, State, Mode, SHAKE_ANIMATION_TIMEOUT, ONE_THOUSAND_MILLISEC};
