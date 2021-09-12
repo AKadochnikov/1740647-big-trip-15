@@ -83,18 +83,21 @@ class Event {
 
     switch (state) {
       case State.SAVING:
+        document.removeEventListener('keydown', this._escKeyDownHandler);
         this._eventEditComponent.updateData({
           isDisabled: true,
           isSaving: true,
         });
         break;
       case State.DELETING:
+        document.removeEventListener('keydown', this._escKeyDownHandler);
         this._eventEditComponent.updateData({
           isDisabled: true,
           isDeleting: true,
         });
         break;
       case State.ABORTING:
+        document.addEventListener('keydown', this._escKeyDownHandler);
         this._eventComponent.shake(resetFormState);
         this._eventEditComponent.shake(resetFormState);
         break;

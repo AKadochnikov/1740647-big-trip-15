@@ -18,17 +18,17 @@ const getOffersCollection = (points, allTypes = false) => {
   return OffersType;
 };
 
-const getOffersPrice = (point, currentArr) => {
+const getOffersPrice = (point, offersTypeCost) => {
   const currentOffers = point.offers;
 
   if (currentOffers !== '') {
     currentOffers.forEach((offer) => {
-      currentArr.push(offer.price);
-      return currentArr;
+      offersTypeCost.push(offer.price);
+      return offersTypeCost;
     });
   }
 
-  return currentArr;
+  return offersTypeCost;
 };
 
 const getOfferTime = (points, offerType) => {
