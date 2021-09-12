@@ -1,5 +1,5 @@
 import EventsModel from './model/events';
-import {METHOD, SUCCESS_STATUS_RANGE} from './const';
+import {Method, SuccessStatusRange} from './const';
 
 class Api {
   constructor(endPoint, authorization) {
@@ -36,7 +36,7 @@ class Api {
   updateEvent(event) {
     return this._load({
       url: `points/${event.id}`,
-      method: METHOD.PUT,
+      method: Method.PUT,
       body: JSON.stringify(EventsModel.adaptToServer(event)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
@@ -46,7 +46,7 @@ class Api {
 
   _load({
     url,
-    method = METHOD.GET,
+    method = Method.GET,
     body = null,
     headers = new Headers(),
   }) {
@@ -60,10 +60,28 @@ class Api {
       .catch(Api.catchError);
   }
 
+  addEvent(event) {
+    return this._load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(EventsModel.adaptToServer(event)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(EventsModel.adaptToClient);
+  }
+
+  deleteEvent(event) {
+    return this._load({
+      url: `points/${event.id}`,
+      method: Method.DELETE,
+    });
+  }
+
   static checkStatus(response) {
     if (
-      response.status < SUCCESS_STATUS_RANGE.MIN ||
-      response.status > SUCCESS_STATUS_RANGE.MAX
+      response.status < SuccessStatusRange.MIN ||
+      response.status > SuccessStatusRange.MAX
     ) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }

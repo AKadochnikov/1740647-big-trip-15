@@ -1,5 +1,37 @@
 import dayjs from 'dayjs';
 
+const AUTHORIZATION = 'Basic ff3ay7rSL9tt9vk7f';
+const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const SHAKE_ANIMATION_TIMEOUT = 600;
+const BAR_HEIGHT = 55;
+
+const NEW_EVENT = {
+  basePrice: 0,
+  dateFrom: dayjs(),
+  dateTo: dayjs(),
+  type: 'taxi',
+  offers: [],
+  destination: {
+    description: 'Chamonix, with crowded streets, middle-eastern paradise, with an embankment of a mighty river as a centre of attraction, a perfect place to stay with a family, famous for its crowded street markets with the best street food in Asia.',
+    name: 'Chamonix',
+    pictures: [
+      {
+        'src': 'http://picsum.photos/300/200?r=0.961477384126419',
+        'description': 'Chamonix kindergarten',
+      },
+      {
+        'src': 'http://picsum.photos/300/200?r=0.8186866271526865',
+        'description': 'Chamonix parliament building',
+      },
+      {
+        'src': 'http://picsum.photos/300/200?r=0.46713149742733173',
+        'description': 'Chamonix central station',
+      },
+    ],
+  },
+  isFavorite: false,
+};
+
 const SortType = {
   SORT_DAY: 'sort-day',
   SORT_EVENT: 'sort-event',
@@ -27,41 +59,36 @@ const FilterType = {
   PAST: 'past',
 };
 
-const NEW_EVENT = {
-  'basePrice': '',
-  'dateFrom': dayjs(),
-  'dateTo': dayjs(),
-  'type': 'taxi',
-  'offers': [],
-  'destination': {
-    'description': '',
-    'name': '',
-    'pictures': [],
-  },
-  'is_Favorite': false,
-};
-
 const MenuItem = {
   TABLE: 'TABLE',
   STATISTICS: 'STATISTICS',
 };
 
-const BAR_HEIGHT = 55;
-
-
-const METHOD = {
+const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
-const SUCCESS_STATUS_RANGE = {
+const SuccessStatusRange = {
   MIN: 200,
   MAX: 299,
 };
 
-const AUTHORIZATION = 'Basic ff3ay7rSL9tt9vk7f';
-const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
+
 
 export {SortType, UserAction, UpdateType, FilterType,
-  NEW_EVENT, MenuItem, BAR_HEIGHT, METHOD,
-  SUCCESS_STATUS_RANGE, AUTHORIZATION, END_POINT};
+  NEW_EVENT, MenuItem, BAR_HEIGHT, Method,
+  SuccessStatusRange, AUTHORIZATION, END_POINT, State, Mode, SHAKE_ANIMATION_TIMEOUT};

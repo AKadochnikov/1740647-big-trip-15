@@ -45,7 +45,7 @@ const createAvailableOffers = (item, offers, isAddEvent) => {
   let offersTemplate = '';
   currentOffers.forEach((offer) => {
     const currentOffersTemplate = `<div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" ${isAddEvent ? '' : `${isChecked(item.offers, offer.title) ? 'checked' : ''}`}>
+                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" ${item.isDisabled ? 'disabled' : ''} ${isAddEvent ? '' : `${isChecked(item.offers, offer.title) ? 'checked' : ''}`}>
                         <label class="event__offer-label" for="event-offer-${offer.title}-1">
                           <span class="event__offer-title">${offer.title}</span>
                           &plus;&euro;&nbsp;
@@ -78,7 +78,7 @@ const createEventEditTemplate = (item, isAddEvent, offers, destinations) => (
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${item.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name ? item.destination.name : destinations[0].name}" list="destination-list-1" onkeyup="this.value=''" required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1" onkeyup="this.value=''" ${item.isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
                       ${createDataListOptionsTemplate(destinations)}
                     </datalist>
@@ -86,10 +86,10 @@ const createEventEditTemplate = (item, isAddEvent, offers, destinations) => (
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatedDate(item.dateFrom)}" readonly>
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatedDate(item.dateFrom)}" ${item.isDisabled ? 'disabled' : ''}>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatedDate(item.dateTo)}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatedDate(item.dateTo)}" ${item.isDisabled ? 'disabled' : ''}>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -97,11 +97,11 @@ const createEventEditTemplate = (item, isAddEvent, offers, destinations) => (
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${item.basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${item.basePrice}" ${item.isDisabled ? 'disabled' : ''}>
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">${isAddEvent ? 'Cancel' : 'Delete'}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${item.isDisabled ? 'disabled' : ''}>${item.isSaving ? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset" ${item.isDisabled ? 'disabled' : ''}>${isAddEvent ? 'Cancel' : `${item.isDeleting ? 'Deleting...' : 'Delete'}`}</button>
                   ${isAddEvent ? '' : '<button class="event__rollup-btn" type="button">'}
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -319,8 +319,7 @@ class EventEdit extends SmartView {
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    //TODO: в дальнейшем надо click переделать на submit
-    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._formSubmitHandler);
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
   _formDeleteClickHandler(evt) {
@@ -344,11 +343,21 @@ class EventEdit extends SmartView {
   }
 
   static parseEventToData(event) {
-    return Object.assign({}, event);
+    return Object.assign({}, event,
+      {
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
   }
 
   static parseDataToEvent(data) {
     data = Object.assign({}, data);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
     return data;
   }
 }
