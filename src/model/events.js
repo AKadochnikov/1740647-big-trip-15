@@ -84,7 +84,7 @@ class Events extends AbstractObserver {
       {
         'base_price': event.basePrice,
         'date_from': event.dateFrom.toISOString(),
-        'date_to': event.dateTo,
+        'date_to': event.dateTo.toISOString(),
         'is_favorite': event.isFavorite,
       },
     );

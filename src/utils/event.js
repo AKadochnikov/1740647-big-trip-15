@@ -37,9 +37,9 @@ const sortDay = (eventA, eventB) => {
 };
 
 const getDateMilliseconds = (event) => {
-  const dateStartObj = dayjs(event.dateFrom, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  const dateEndObj = dayjs(event.dateTo, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
-  const currentDuration = dateEndObj.diff(dateStartObj);
+  const dateStart = dayjs(event.dateFrom, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const dateEnd = dayjs(event.dateTo, 'YYYY-MM-DDTHH:mm:ssZ[Z]');
+  const currentDuration = dateEnd.diff(dateStart);
   return dayjs(currentDuration);
 };
 
