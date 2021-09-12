@@ -78,7 +78,7 @@ const createEventEditTemplate = (item, isAddEvent, offers, destinations) => (
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${item.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1" onkeyup="this.value=''" ${item.isDisabled ? 'disabled' : ''}>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${item.destination.name}" list="destination-list-1" onkeyup="this.value=''" ${item.isDisabled ? 'disabled' : ''} required>
                     <datalist id="destination-list-1">
                       ${createDataListOptionsTemplate(destinations)}
                     </datalist>
