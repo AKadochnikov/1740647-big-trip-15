@@ -89,7 +89,6 @@ class Event {
         });
         break;
       case State.DELETING:
-        document.removeEventListener('keydown', this._escKeyDownHandler);
         this._eventEditComponent.updateData({
           isDisabled: true,
           isDeleting: true,
