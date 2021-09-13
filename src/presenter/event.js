@@ -83,14 +83,12 @@ class Event {
 
     switch (state) {
       case State.SAVING:
-        document.removeEventListener('keydown', this._escKeyDownHandler);
         this._eventEditComponent.updateData({
           isDisabled: true,
           isSaving: true,
         });
         break;
       case State.DELETING:
-        document.removeEventListener('keydown', this._escKeyDownHandler);
         this._eventEditComponent.updateData({
           isDisabled: true,
           isDeleting: true,
@@ -152,7 +150,7 @@ class Event {
     const isMinorUpdate =
       !isDatesEqual(this._event.dateFrom, update.dateFrom) ||
       !isDatesEqual(this._event.dateTo, update.dateTo);
-
+    document.removeEventListener('keydown', this._escKeyDownHandler);
     this._changeData(
       UserAction.UPDATE_EVENT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
@@ -161,6 +159,7 @@ class Event {
   }
 
   _handleDeleteClick(event) {
+    document.removeEventListener('keydown', this._escKeyDownHandler);
     this._changeData(
       UserAction.DELETE_EVENT,
       UpdateType.MINOR,
