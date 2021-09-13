@@ -43,7 +43,6 @@ class EventNew {
   }
 
   setSaving() {
-    document.removeEventListener('keydown', this._escKeyDownHandler);
     this._eventEditComponent.updateData({
       isDisabled: true,
       isSaving: true,
@@ -52,7 +51,6 @@ class EventNew {
 
   setAborting() {
     const resetFormState = () => {
-      document.addEventListener('keydown', this._escKeyDownHandler);
       this._eventEditComponent.updateData({
         isDisabled: false,
         isSaving: false,
@@ -64,6 +62,7 @@ class EventNew {
   }
 
   _handleFormSubmit(event) {
+    document.removeEventListener('keydown', this._escKeyDownHandler);
     this._changeData(
       UserAction.ADD_EVENT,
       UpdateType.MINOR,
