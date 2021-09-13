@@ -50,6 +50,7 @@ class EventNew {
   }
 
   setAborting() {
+    document.addEventListener('keydown', this._escKeyDownHandler);
     const resetFormState = () => {
       this._eventEditComponent.updateData({
         isDisabled: false,
