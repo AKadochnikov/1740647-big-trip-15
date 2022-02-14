@@ -1,5 +1,5 @@
 # Проект «Большое путешествие»
-https://github.com/AKadochnikov/1740647-big-trip-15
+https://bigtrip-kadochnikov.netlify.app/
 
 Данный проект сделан на чистом JavaScript (ООП). 
 С применением архитектурного паттерна MVP.
